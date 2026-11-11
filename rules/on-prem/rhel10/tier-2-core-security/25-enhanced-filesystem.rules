@@ -1,0 +1,18 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | on-prem/rhel10
+# Enterprise Linux Audit v0.16  |  [on-prem/rhel10]
+# Tier: tier-2-core-security
+# Purpose: direct-root session permission/file destruction behavior
+# Source/authority: Enterprise SOC/IR minimum (former Tier 3)
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# Can be noisy for maintenance tasks performed from interactive root sessions.
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid=0 -k t2_root_filechange
+-a always,exit -F arch=b64 -S chown,fchown,fchownat,lchown -F auid=0 -k t2_root_filechange
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat,rmdir -F auid=0 -k t2_root_filedelete
+
+# v0.13: x86_64 compatibility ABI (b32) variants; omit on aarch64.
+-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid=0 -k t2_root_filechange
+-a always,exit -F arch=b32 -S chown,fchown,fchownat,lchown -F auid=0 -k t2_root_filechange
+-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat,rmdir -F auid=0 -k t2_root_filedelete

@@ -1,0 +1,19 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | on-prem/ubuntu2204
+# Enterprise Linux Audit v0.16  |  [on-prem/ubuntu2204]
+# Tier: tier-1-baseline
+# Purpose: MAC administrative policy changes and enforcement context
+# Source/authority: DISA applicable product STIG/SRG as applicable; vendor SELinux/AppArmor docs
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# AppArmor policies; AppArmor denials are logged through audit/journal/syslog as configured.
+-a always,exit -F arch=b64 -F dir=/etc/apparmor.d -F perm=wa -k t1_apparmor_policy
+# AppArmor parser is ACTIVE as a V2R10 requirement; ensure the binary exists before loading.
+# Ubuntu 22.04 package manifest lists /sbin/apparmor_parser; applicable 22.04
+# Source: https://packages.ubuntu.com/jammy/all/apparmor/filelist
+# UBTU-22-654010 / V-260604 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F path=/sbin/apparmor_parser -F perm=x -F auid>=1000 -F auid!=unset -k t1_apparmor_parser
+# Active executable watch: if the binary is absent, resolve by package prerequisite or an approved waiver.
+
+# the binary is absent install apparmor or document an approved exception.

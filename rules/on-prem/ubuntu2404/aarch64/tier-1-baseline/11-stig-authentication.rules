@@ -1,0 +1,48 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | on-prem/ubuntu2404
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16 | on-prem/ubuntu2404
+# Tier 1 — Ubuntu 24.04 audit-rule candidate
+# Source: Canonical Ubuntu 24.04 LTS DISA STIG V1R7, manual XCCDF fix text
+# Source archive: https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_CAN_Ubuntu_24-04_LTS_V1R7_STIG.zip
+# ARM64 variant is translated from a reviewer x86_64 source; independently validate ARM64 STIG applicability and paths.
+# IMPORTANT: missing paths need remediation or approved N/A/exception; do not silently ignore errors.
+
+## Tier: 1 — Baseline (Canonical Ubuntu 24.04 LTS STIG V1R7)
+## Functional area: authentication and session-privileged commands
+## V-270778 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the su command.
+-a always,exit -F path=/bin/su -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-priv_change
+
+## V-270790 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the chsh command.
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=-1 -k priv_cmd
+
+## V-270791 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the newgrp command.
+-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=-1 -k priv_cmd
+
+## V-270803 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the crontab command.
+-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-crontab
+
+## V-270804 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the pam_timestamp_check command.
+-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-pam_timestamp_check
+
+## V-270740 — Ubuntu 24.04 LTS must generate audit records for privileged activities, nonlocal maintenance, diagnostic sessions, and o
+# IMAGE PREREQUISITE / STIG DIRECTIVE RETAINED: /var/log/sudo.log is
+# NOT a default Ubuntu sudo log file. Create/configure sudo file logging
+# according to approved security configuration, or record applicability/waiver.
+# Without the file the following audit watch may fail to load. Do not
+# silently drop this STIG-derived rule or treat syslog as equivalent.
+# Source: https://manpages.ubuntu.com/manpages/noble/man5/sudoers.5.html
+-w /var/log/sudo.log -p wa -k maintenance
+
+## V-270779 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the chfn command.
+-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-chfn
+
+# Enterprise baseline — PAM configuration changes (not a V1R7 fix-text substitution).
+-a always,exit -F arch=b64 -F dir=/etc/pam.d -F perm=wa -k t1_authpolicy
+
+# v0.13: audit and PAM configuration tamper monitoring
+-a always,exit -F arch=b64 -F dir=/etc/security -F perm=wa -k t1_pam_security
+-a always,exit -F arch=b64 -F dir=/etc/audit -F perm=wa -k t1_audit_config
+# Conditional: monitor /etc/ssh, /etc/sudoers and /etc/sudoers.d when present; missing paths must be addressed or waived.
+# -a always,exit -F arch=b64 -F dir=/etc/ssh -F perm=wa -k t1_ssh_config
+# -a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k t1_sudo_config
+# -a always,exit -F arch=b64 -F dir=/etc/sudoers.d -F perm=wa -k t1_sudo_config

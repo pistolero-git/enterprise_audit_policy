@@ -1,0 +1,45 @@
+# TARGET ARCHITECTURE: aarch64 | v0.16 | on-prem/ubuntu2204
+# Tier 1 target: Ubuntu 22.04 LTS (V2R10 reconciliation candidate)
+# Engineering basis: Ubuntu 24.04 V1R7 audit objectives, not an exact source-rule extraction
+# IMPORTANT: this profile is NOT an approved product STIG implementation.
+# Vendor and STIG-specific path prerequisites must be met before deployment.
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16 | on-prem/ubuntu2204
+# Tier 1 — Ubuntu 22.04 candidate audit-rule candidate
+# ARM64 variant is translated from a reviewer x86_64 source; independently validate ARM64 STIG applicability and paths.
+# IMPORTANT: missing paths need remediation or approved N/A/exception; do not silently ignore errors.
+
+## Functional area: kernel modules, partitioning, cron execution, systemd journal
+# UBTU-22-654175 / V-260637 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S init_module,finit_module -F auid>=1000 -F auid!=-1 -k module_chng
+
+# UBTU-22-654170 / V-260636 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S delete_module -F auid>=1000 -F auid!=-1 -k module_chng
+
+# UBTU-22-654060 / V-260614 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-w /sbin/modprobe -p x -k modules
+
+# UBTU-22-654055 / V-260613 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-w /bin/kmod -p x -k modules
+
+# UBTU-22-654045 / V-260611 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-w /usr/sbin/fdisk -p x -k fdisk
+
+# UBTU-22-654041 / V-274862 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-w /etc/cron.d/ -p wa -k cronjobs
+# UBTU-22-654041 / V-274862 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-w /var/spool/cron/ -p wa -k cronjobs
+
+# UBTU-22-654190 / V-260640 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-w /var/log/journal -p wa -k systemd_journal
+
+# Enterprise baseline — interactive-user system time adjustments.
+-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F auid>=1000 -F auid!=unset -k t1_time
+
+# v0.14: modern syscall and mount/privilege telemetry; enterprise coverage, not a STIG attestation
+-a always,exit -F arch=b64 -S openat2 -F exit=-EACCES -F auid>=1000 -F auid!=unset -k t1_access_fail_modern
+-a always,exit -F arch=b64 -S openat2 -F exit=-EPERM -F auid>=1000 -F auid!=unset -k t1_access_fail_modern
+-a always,exit -F arch=b64 -S renameat2 -F auid>=1000 -F auid!=unset -k t1_delete_modern
+-a always,exit -F arch=b64 -S fchmodat2 -F auid>=1000 -F auid!=unset -k t1_perm_mod_modern
+-a always,exit -F arch=b64 -S mount,umount2 -F auid>=1000 -F auid!=unset -k t1_mount
+-a always,exit -F arch=b64 -S setgid,setregid,setresgid -F auid>=1000 -F auid!=unset -k t1_group_priv

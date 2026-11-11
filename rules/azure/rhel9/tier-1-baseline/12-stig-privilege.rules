@@ -1,0 +1,64 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | azure/rhel9
+# Enterprise Linux Audit v0.16  |  [azure/rhel9]
+# Tier: tier-1-baseline
+# Purpose: privilege transitions and sudo policy changes
+# Source/authority: DISA applicable product STIG/SRG objective; linux-audit sample rules
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+# PACKAGE PREFLIGHT: postdrop/postqueue require Postfix; userhelper requires the corresponding RHEL package.
+# Verify RPM file manifests for the exact RHEL 9 repository/image; this
+# source-derived STIG file preserves applicable rules rather than dropping them.
+
+# OPTIONAL if sudo installed:
+# -a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k t1_sudoers
+# -a always,exit -F arch=b64 -F dir=/etc/sudoers.d -F perm=wa -k t1_sudoers
+# Host-specific privileged executables may require additional STIG-derived rules.
+
+# v0.13 RHEL 9 candidate additions from prior RHEL 9 V2R10 source bundle.
+# Prior bundle contained V-258176..V-258228; reconcile each current product STIG.
+# Verify ALL referenced paths on this exact image before enabling; missing targets block loading.
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-001 / V-258176; verify with current DISA source.
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-001 / V-258176; verify with current DISA source.
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-001 / V-258176; verify with current DISA source.
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-001 / V-258176; verify with current DISA source.
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-015 / V-258180; verify with current DISA source.
+-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-018 / V-258193; verify with current DISA source.
+-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -k privileged-crontab
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-025 / V-258199; verify with current DISA source.
+-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-026 / V-258200; verify with current DISA source.
+-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-030 / V-258204; verify with current DISA source.
+-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-031 / V-258205; verify with current DISA source.
+-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-034 / V-258208; verify with current DISA source.
+-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-037 / V-258210; verify with current DISA source.
+-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-038 / V-258211; verify with current DISA source.
+-a always,exit -F path=/usr/sbin/init -F perm=x -F auid>=1000 -F auid!=unset -k privileged-init
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-039 / V-258212; verify with current DISA source.
+-a always,exit -F path=/usr/sbin/poweroff -F perm=x -F auid>=1000 -F auid!=unset -k privileged-poweroff
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-040 / V-258213; verify with current DISA source.
+-a always,exit -F path=/usr/sbin/reboot -F perm=x -F auid>=1000 -F auid!=unset -k privileged-reboot
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-041 / V-258214; verify with current DISA source.
+-a always,exit -F path=/usr/sbin/shutdown -F perm=x -F auid>=1000 -F auid!=unset -k privileged-shutdown
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-042 / V-258215; verify with current DISA source.
+-a always,exit -F arch=b32 -S umount -F auid>=1000 -F auid!=unset -k privileged-umount
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-043 / V-258216; verify with current DISA source.
+-a always,exit -F arch=b32 -S umount2 -F auid>=1000 -F auid!=unset -k privileged-umount
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-043 / V-258216; verify with current DISA source.
+-a always,exit -F arch=b64 -S umount2 -F auid>=1000 -F auid!=unset -k privileged-umount
+
+# v0.13: preserve source execve rules; include the separate execveat syscall for privilege transitions.
+-a always,exit -F arch=b64 -S execveat -C uid!=euid -F euid=0 -k t1_execveat_priv
+-a always,exit -F arch=b64 -S execveat -C gid!=egid -F egid=0 -k t1_execveat_priv
+-a always,exit -F arch=b32 -S execveat -C uid!=euid -F euid=0 -k t1_execveat_priv
+-a always,exit -F arch=b32 -S execveat -C gid!=egid -F egid=0 -k t1_execveat_priv

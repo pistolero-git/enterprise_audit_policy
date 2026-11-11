@@ -1,0 +1,20 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | on-prem/debian13
+# Enterprise Linux Audit v0.16  |  [on-prem/debian13]
+# Tier: tier-2-core-security
+# Purpose: security administration process activity
+# Source/authority: Enterprise SOC/IR minimum
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# Selective execution coverage of privilege-relevant syscalls.
+-a always,exit -F arch=b64 -S setuid,setreuid,setresuid -F auid>=1000 -F auid!=unset -k t2_privilege_api
+# OPTIONAL commands by exact path (enable only when installed):
+# -a always,exit -F path=/usr/bin/systemctl -F perm=x -F auid>=1000 -F auid!=unset -k t2_service_admin
+# -a always,exit -F path=/usr/sbin/auditctl -F perm=x -F auid>=1000 -F auid!=unset -k t2_audit_admin
+# Debian-family package tooling (enable only if installed):
+# -a always,exit -F path=/usr/bin/apt-get -F perm=x -F auid>=1000 -F auid!=unset -k t2_pkg_admin
+# -a always,exit -F path=/usr/bin/dpkg -F perm=x -F auid>=1000 -F auid!=unset -k t2_pkg_admin
+
+# v0.13: x86_64 compat ABI counterpart.
+-a always,exit -F arch=b32 -S setuid,setreuid,setresuid -F auid>=1000 -F auid!=unset -k t2_privilege_api

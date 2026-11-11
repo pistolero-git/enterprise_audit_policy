@@ -1,0 +1,20 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | azure/ubuntu2604
+# Enterprise Linux Audit v0.16  |  [azure/ubuntu2604]
+# Tier: tier-1-baseline
+# Purpose: MAC administrative policy changes and enforcement context
+# Source/authority: DISA applicable product STIG/SRG as applicable; vendor SELinux/AppArmor docs
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# Ubuntu 26.04 LTS (Resolute Raccoon), AppArmor 5.x.
+# Source: Canonical 26.04 release/security documentation; OS profile derived from Ubuntu 24.04.
+# DISA Ubuntu 26.04 STIG not verified as published as of 2026-11-07.
+# This is an enterprise engineering baseline, NOT a validated 26.04 STIG rule mapping.
+# AppArmor policies; AppArmor denials are logged through audit/journal/syslog as configured.
+-a always,exit -F arch=b64 -F dir=/etc/apparmor.d -F perm=wa -k t1_apparmor_policy
+# Ubuntu 26.04 package manifest: apparmor_parser is /usr/sbin/apparmor_parser (amd64 and arm64).
+# Source: https://packages.ubuntu.com/resolute/amd64/apparmor/filelist
+# Ubuntu 26.04 engineering baseline: AppArmor profile-load activity is required by enterprise policy.
+# Verify parser executable location on the image; adapt the path if needed before deployment.
+-a always,exit -F path=/usr/sbin/apparmor_parser -F perm=x -F auid>=1000 -F auid!=unset -k t1_apparmor_parser

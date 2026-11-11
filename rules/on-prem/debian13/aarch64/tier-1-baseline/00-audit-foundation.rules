@@ -1,0 +1,14 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | on-prem/debian13
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [on-prem/debian13]
+# Tier: tier-1-baseline
+# Purpose: initialize managed policy
+# Source/authority: linux-audit/audit-userspace rules/10-base-config.rules; enterprise policy
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# WARNING: -D clears existing kernel audit rules. Merge into site policy only with change approval.
+-D
+-b 8192
+--backlog_wait_time 60000

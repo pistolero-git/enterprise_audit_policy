@@ -1,0 +1,18 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | aws/almalinux9
+# Enterprise Linux Audit v0.16  |  [aws/almalinux9]
+# Tier: tier-1-baseline
+# Purpose: user/group account database modifications
+# Source/authority: DISA applicable product STIG/SRG objective; Linux Audit upstream examples
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -k t1_identity
+-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -k t1_identity
+-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -k t1_identity
+-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -k t1_identity
+# OPTIONAL (requires existing file): /etc/security/opasswd
+# -a always,exit -F arch=b64 -F path=/etc/security/opasswd -F perm=wa -k t1_identity
+
+# v0.13: additional identity/authentication configuration monitoring (enterprise baseline)
+-a always,exit -F arch=b64 -F path=/etc/nsswitch.conf -F perm=wa -k t1_identity_resolve

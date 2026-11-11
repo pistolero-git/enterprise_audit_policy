@@ -1,0 +1,40 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | on-prem/ubuntu2604
+# Tier 1 target: Ubuntu 26.04 LTS (enterprise inheritance only)
+# Engineering basis: Ubuntu 24.04 V1R7 audit objectives, not an exact source-rule extraction
+# IMPORTANT: this profile is NOT an approved product STIG implementation.
+# Vendor and STIG-specific path prerequisites must be met before deployment.
+# Enterprise Linux Audit v0.16 | on-prem/ubuntu2604
+# Tier 1 — Ubuntu 26.04 candidate audit-rule candidate
+# IMPORTANT: missing paths need remediation or approved N/A/exception; do not silently ignore errors.
+
+## Functional area: authentication and session-privileged commands
+-a always,exit -F path=/bin/su -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-priv_change
+
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=-1 -k priv_cmd
+
+-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=-1 -k priv_cmd
+
+-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-crontab
+
+-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-pam_timestamp_check
+
+# IMAGE PREREQUISITE / STIG DIRECTIVE RETAINED: /var/log/sudo.log is
+# NOT a default Ubuntu sudo log file. Create/configure sudo file logging
+# according to approved security configuration, or record applicability/waiver.
+# Without the file the following audit watch may fail to load. Do not
+# silently drop this inherited rule or treat syslog as equivalent.
+# Source: https://manpages.ubuntu.com/manpages/noble/man5/sudoers.5.html
+-w /var/log/sudo.log -p wa -k maintenance
+
+-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-chfn
+
+# Enterprise baseline — PAM configuration changes (not claimed as an applicable product STIG fix).
+-a always,exit -F arch=b64 -F dir=/etc/pam.d -F perm=wa -k t1_authpolicy
+
+# v0.14: audit and PAM configuration tamper monitoring
+-a always,exit -F arch=b64 -F dir=/etc/security -F perm=wa -k t1_pam_security
+-a always,exit -F arch=b64 -F dir=/etc/audit -F perm=wa -k t1_audit_config
+# Conditional: monitor /etc/ssh, /etc/sudoers and /etc/sudoers.d when present; missing paths must be addressed or waived.
+# -a always,exit -F arch=b64 -F dir=/etc/ssh -F perm=wa -k t1_ssh_config
+# -a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k t1_sudo_config
+# -a always,exit -F arch=b64 -F dir=/etc/sudoers.d -F perm=wa -k t1_sudo_config

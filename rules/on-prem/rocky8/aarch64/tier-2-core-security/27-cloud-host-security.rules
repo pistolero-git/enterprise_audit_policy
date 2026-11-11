@@ -1,0 +1,14 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | on-prem/rocky8
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [on-prem/rocky8]
+# Tier: tier-2-core-security
+# Purpose: cloud tooling on on-prem hybrid-connected Linux
+# Source/authority: Enterprise SOC/IR minimum
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# No active provider-specific rules for on-premises hosts by default.
+# If this host uses AWS SSM hybrid activation, Azure Arc, or Google hybrid agents,
+# apply the corresponding provider-specific host rules after confirming installed paths.
+# Host-native process, credential and persistence monitoring is covered by Tier 2 files.

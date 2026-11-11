@@ -1,0 +1,11 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | aws/ubuntu2404
+# Enterprise Linux Audit v0.16  |  [aws/ubuntu2404]
+# Tier: tier-2-core-security
+# Purpose: package repository tampering
+# Source/authority: Enterprise SOC/IR minimum; distro package manager vendor documentation
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+-a always,exit -F arch=b64 -F dir=/etc/apt -F perm=wa -k t2_pkg_repo
+# Capture apt/dpkg transactions through OS package logs as a companion data source.

@@ -1,0 +1,14 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | aws/oraclelinux9
+# Enterprise Linux Audit v0.16  |  [aws/oraclelinux9]
+# Tier: tier-2-core-security
+# Purpose: systemd persistence and optional cron/loader persistence
+# Source/authority: Enterprise SOC/IR minimum
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+-a always,exit -F arch=b64 -F dir=/etc/systemd/system -F perm=wa -k t2_persistence
+# OPTIONAL existing locations:
+# -a always,exit -F arch=b64 -F dir=/etc/cron.d -F perm=wa -k t2_persistence
+# -a always,exit -F arch=b64 -F dir=/var/spool/cron -F perm=wa -k t2_persistence
+# -a always,exit -F arch=b64 -F dir=/etc/ld.so.conf.d -F perm=wa -k t2_ldconfig

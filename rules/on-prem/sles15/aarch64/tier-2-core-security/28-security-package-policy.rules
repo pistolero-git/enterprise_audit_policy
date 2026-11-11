@@ -1,0 +1,12 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | on-prem/sles15
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [on-prem/sles15]
+# Tier: tier-2-core-security
+# Purpose: package repository tampering
+# Source/authority: Enterprise SOC/IR minimum; distro package manager vendor documentation
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+-a always,exit -F arch=b64 -F dir=/etc/zypp -F perm=wa -k t2_pkg_repo
+# Capture zypper/rpm transactions through native package logs.

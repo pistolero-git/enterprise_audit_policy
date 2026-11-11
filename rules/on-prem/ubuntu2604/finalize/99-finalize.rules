@@ -1,0 +1,11 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | on-prem/ubuntu2604
+# Enterprise Linux Audit v0.16  |  [on-prem/ubuntu2604]
+# Tier: finalize
+# Purpose: lock audit policy AFTER all selected rules are validated
+# Source/authority: DISA applicable STIG if required; Linux Audit upstream finalization
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# Immutable audit mode; audit rule changes generally require reboot afterwards.
+-e 2

@@ -1,0 +1,20 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | gcp/rhel10
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [gcp/rhel10]
+# Tier: tier-1-baseline
+# Purpose: privilege transitions and sudo policy changes
+# Source/authority: DISA applicable product STIG/SRG objective; linux-audit sample rules
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k t1_privexec
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k t1_privexec
+# OPTIONAL if sudo installed:
+# -a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k t1_sudoers
+# -a always,exit -F arch=b64 -F dir=/etc/sudoers.d -F perm=wa -k t1_sudoers
+# Host-specific privileged executables may require additional STIG-derived rules.
+
+# v0.13: preserve source execve rules; include the separate execveat syscall for privilege transitions.
+-a always,exit -F arch=b64 -S execveat -C uid!=euid -F euid=0 -k t1_execveat_priv
+-a always,exit -F arch=b64 -S execveat -C gid!=egid -F egid=0 -k t1_execveat_priv

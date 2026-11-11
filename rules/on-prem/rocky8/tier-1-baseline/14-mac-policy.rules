@@ -1,0 +1,15 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | on-prem/rocky8
+# Enterprise Linux Audit v0.16  |  [on-prem/rocky8]
+# Tier: tier-1-baseline
+# Purpose: MAC administrative policy changes and enforcement context
+# Source/authority: DISA applicable product STIG/SRG as applicable; vendor SELinux/AppArmor docs
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# SELinux policy configuration; SELinux AVC denials are emitted by the subsystem itself.
+-a always,exit -F arch=b64 -F dir=/etc/selinux -F perm=wa -k t1_selinux_policy
+# OPTIONAL command monitors if binaries exist:
+# -a always,exit -F arch=b64 -F path=/usr/sbin/semanage -F perm=x -k t1_selinux_admin
+# -a always,exit -F arch=b64 -F path=/usr/sbin/setsebool -F perm=x -k t1_selinux_admin
+# Enforcement mode must be checked separately with getenforce/sestatus.

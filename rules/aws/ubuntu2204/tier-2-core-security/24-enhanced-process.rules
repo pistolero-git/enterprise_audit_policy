@@ -1,0 +1,22 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | aws/ubuntu2204
+# Enterprise Linux Audit v0.16  |  [aws/ubuntu2204]
+# Tier: tier-2-core-security
+# Purpose: interactive process execution and forensic process context
+# Source/authority: Enterprise SOC/IR minimum (former Tier 3)
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# HIGH VOLUME: all audited interactive-user execve on busy systems; mandatory unless approved waiver.
+-a always,exit -F arch=b64 -S execve -F auid>=1000 -F auid!=unset -k t2_exec_user
+# Direct root login execution is usually rare but important to IR.
+-a always,exit -F arch=b64 -S execve -F auid=0 -k t2_exec_root
+# execve records include executable/proctitle/arguments, not complete shell command content.
+
+# v0.13: execveat is a distinct execution syscall. x86_64 includes compat ABI monitoring.
+-a always,exit -F arch=b64 -S execveat -F auid>=1000 -F auid!=unset -k t2_exec_user
+-a always,exit -F arch=b64 -S execveat -F auid=0 -k t2_exec_root
+-a always,exit -F arch=b32 -S execve -F auid>=1000 -F auid!=unset -k t2_exec_user
+-a always,exit -F arch=b32 -S execveat -F auid>=1000 -F auid!=unset -k t2_exec_user
+-a always,exit -F arch=b32 -S execve -F auid=0 -k t2_exec_root
+-a always,exit -F arch=b32 -S execveat -F auid=0 -k t2_exec_root

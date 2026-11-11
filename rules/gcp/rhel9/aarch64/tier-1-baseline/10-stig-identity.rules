@@ -1,0 +1,36 @@
+# RHEL 9 ARM translation from older local V2R10 source; not official ARM-compliance evidence.
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | gcp/rhel9
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [gcp/rhel9]
+# Tier: tier-1-baseline
+# Purpose: user/group account database modifications
+# Source/authority: DISA applicable product STIG/SRG objective; Linux Audit upstream examples
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# OPTIONAL (requires existing file): /etc/security/opasswd
+# -a always,exit -F arch=b64 -F path=/etc/security/opasswd -F perm=wa -k t1_identity
+
+# v0.13 RHEL 9 candidate additions from prior RHEL 9 V2R10 source bundle.
+# Prior bundle contained V-258176..V-258228; reconcile each current product STIG.
+# Verify ALL referenced paths on this exact image before enabling; missing targets block loading.
+-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chage
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+-a always,exit -F arch=b64 -F path=/usr/bin/gpasswd -F perm=x -k identity
+-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+-a always,exit -F arch=b64 -F path=/usr/bin/passwd -F perm=x -k identity
+-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-usermod
+-a always,exit -F path=/usr/sbin/useradd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-useradd
+-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k identity
+-a always,exit -F arch=b64 -F path=/etc/sudoers.d -F perm=wa -k identity
+-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -k identity
+-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -k identity
+-a always,exit -F arch=b64 -F path=/etc/security/opasswd -F perm=wa -k identity
+-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -k identity
+-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -k identity
+-a always,exit -F arch=b64 -F path=/var/log/faillock -F perm=wa -F auid>=1000 -F auid!=unset -k logins
+-a always,exit -F arch=b64 -F path=/var/log/lastlog -F perm=wa -F auid>=1000 -F auid!=unset -k logins
+
+# v0.13: additional identity/authentication configuration monitoring (enterprise baseline)
+-a always,exit -F arch=b64 -F path=/etc/nsswitch.conf -F perm=wa -k t1_identity_resolve

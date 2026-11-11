@@ -1,0 +1,55 @@
+# TARGET ARCHITECTURE: aarch64 | v0.16 | gcp/ubuntu2604
+# Tier 1 target: Ubuntu 26.04 LTS (enterprise inheritance only)
+# Engineering basis: Ubuntu 24.04 V1R7 audit objectives, not an exact source-rule extraction
+# IMPORTANT: this profile is NOT an approved product STIG implementation.
+# Vendor and STIG-specific path prerequisites must be met before deployment.
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16 | gcp/ubuntu2604
+# Tier 1 — Ubuntu 26.04 candidate audit-rule candidate
+# ARM64 variant is translated from a reviewer x86_64 source; independently validate ARM64 STIG applicability and paths.
+# IMPORTANT: missing paths need remediation or approved N/A/exception; do not silently ignore errors.
+
+## Functional area: identity, account administration, login records
+-w /etc/passwd -p wa -k usergroup_modification
+
+-w /etc/group -p wa -k usergroup_modification
+
+-w /etc/shadow -p wa -k usergroup_modification
+
+-w /etc/gshadow -p wa -k usergroup_modification
+
+# PREREQUISITE: /etc/security/opasswd is created/used only with configured
+# password-history mechanisms; never assume it exists on cloud images.
+-w /etc/security/opasswd -p wa -k usergroup_modification
+
+-w /var/log/wtmp -p wa -k logins
+
+-w /var/run/utmp -p wa -k logins
+
+-w /var/log/btmp -p wa -k logins
+
+-w /var/log/lastlog -p wa -k logins
+
+# PREREQUISITE: /var/log/faillog is legacy/runtime-image dependent;
+# assess STIG remediation or approved applicability if absent.
+-w /var/log/faillog -p wa -k logins
+
+## V-288818 — Ubuntu 26.04 candidate LTS must generate audit records for successful/unsuccessful uses of the useradd command.
+-a always,exit -F path=/usr/sbin/useradd -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-useradd
+
+-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-usermod
+
+-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-chage
+
+-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-gpasswd
+
+-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-passwd
+
+# PACKAGE PATH: Ubuntu 26.04 candidate libpam-modules-bin lists /usr/sbin/unix_update.
+# This STIG extraction says /sbin/unix_update; check usr-merge alias resolves
+# to the packaged binary, rather than assuming it does on every image.
+# Source: https://packages.ubuntu.com/noble-updates/amd64/libpam-modules-bin/filelist
+-a always,exit -F path=/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-unix-update
+
+# v0.14: additional identity/authentication configuration monitoring (enterprise baseline)
+-a always,exit -F arch=b64 -F path=/etc/nsswitch.conf -F perm=wa -k t1_identity_resolve

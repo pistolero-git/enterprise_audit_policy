@@ -1,0 +1,15 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | aws/rocky9
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [aws/rocky9]
+# Tier: tier-2-core-security
+# Purpose: hostname and local resolver changes
+# Source/authority: Enterprise SOC/IR minimum
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+-a always,exit -F arch=b64 -S sethostname,setdomainname -F auid>=1000 -F auid!=unset -k t2_net_config
+-a always,exit -F arch=b64 -F path=/etc/hosts -F perm=wa -k t2_net_config
+# OPTIONAL if the file exists (often a symlink or dynamically managed):
+# -a always,exit -F arch=b64 -F path=/etc/resolv.conf -F perm=wa -k t2_net_config
+# Cloud security-group / NSG / VPC firewall changes occur in cloud control-plane APIs, not here.

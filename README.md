@@ -1,0 +1,109 @@
+# Enterprise Linux Audit Policy — v0.16
+
+**Status: ENGINEERING CANDIDATE — no profile is certified STIG-compliant or production-approved by this release.**
+
+v0.15 retains the v0.14 remediation of several *static* defects identified in the independent v0.11 validation report. **It does not close the remaining platform STIG-reconciliation, file-existence, agent-installation, on-host event-generation, performance, or SIEM-validation gates.**
+
+
+## v0.16: CVE-specific Tier 3 + CVE-independent Tier 2 integrity
+
+- Replaced `31-cve.rules` with **six separately named, threat-directed files** per architecture/profile: `CVE-2026-31431.rules` (Copy Fail), `CVE-2026-43284.rules` and `CVE-2026-43500.rules` (Dirty Frag), `CVE-2026-74580.rules` (failed SOCK_RAW), and `CVE-2026-109618.rules` / `CVE-2026-109619.rules` (PHP2Shell). Generic `30-exploitation.rules` is unchanged.
+- **Tier 3 is not an automatic install.** Select ONLY CVE files that apply to an exposed/affected asset and have a threat-monitoring requirement. Where several CVEs share equivalent collection, choose one sensor rule implementation rather than installing identical candidates together. Auditing **does not remediate** a CVE: vendor patches or mitigations remain the primary response. Splunk searches may require audit-key adaptation.
+- PHP2Shell files intentionally contain **commented service-binary selectors** pending installed-package/workload confirmation; do not treat them as enabled sensors merely because the file exists. Complement with HTTP/PHP error logs, or EDR/Sysmon, as applicable.
+- Added `29-system-config-integrity.rules` as an **inactive Tier 2 proposal** for **write/attribute activity under `/etc`**. If promoted and enabled, it would cover creation of `/etc/ld.so.preload`, shell system profiles, SSH/sudoers and other CVE-agnostic security configuration, even when an individual target file is missing at startup. This would be a broad directory rule: it is **commented out pending collection-volume and duplicate-overlap review** and must not be described as deployed Tier 2 coverage.
+- Magic SysRq procfs watches are **conditional candidates**, not active defaults, because presence and behavior vary by kernel/image. Per-user shell startup hunting and sudoers **read** monitoring remain Tier 3 candidates requiring workload scoping; no fleet-wide home read watches were added.
+- **CVE-2026-111497** is a Brotli decoder vulnerability, **not** Dirty Frag; it has no fabricated auditd kernel-splice rules in this release.
+
+## v0.14 offline package and path verification (no running host required)
+
+This release also checks published Ubuntu generic cloud-image manifests and Amazon Linux standard/minimal AMI package comparisons. The cited generic Ubuntu 24.04/26.04 cloud images do not list `auditd` or `acl`; AL2023/AL2027 minimal AMIs do not list SSM Agent.
+
+This release adds vendor-package evidence and explicit prerequisites for Ubuntu 22.04/24.04/26.04, Debian 12/13, and cloud guest-agent paths. Ubuntu 26.04 `apparmor_parser` watches now target the `/usr/sbin` packaged location. Ubuntu 24.04 STIG-derived rule lines, including `/var/log/sudo.log` and `/sbin/unix_update`, are **unchanged**: each is now annotated with the necessary image/path prerequisite; the former may not exist by default and will block direct loading. GCP host files add **conditional** `.template` and guest-agent plugin-state watches. Provider-specific conditional watches are not assumed installed.
+
+**This is not a universal no-touch drop-in.** A distribution's package manifest identifies the path shipped by a package, *not* whether that package or a dynamically-created file is present in any given cloud/golden image. The 80 variants remain engineering candidates, not production-approved or STIG-certified. See the existing guides for the offline acceptance gate and required customer applicability/exception decisions.
+
+## v0.14 — Ubuntu 22.04/26.04 and Debian baseline remediation
+
+- **Ubuntu 22.04 (8 architecture/hosting variants):** Expanded Tier 1 from the comprehensive Ubuntu 24.04 *audit objectives* (account management, privilege binaries, access failures, kernel modules, login records, sudoers, journald, cron), and ACTIVATED `/sbin/apparmor_parser` under V2R10 **UBTU-22-654010 / V-260604**. Retained separate `-e 2` in Finalize (**V-288816**). **Do not claim 49/49 verified V-ID coverage:** the user's SHA256 `2229b5be…` source archive was described but not supplied to this run, and a full machine-readable XCCDF audit extraction was not available for an exact rule-by-rule comparison.
+- **Ubuntu 26.04 (8 variants):** Now inherits the full Ubuntu 24.04 Tier 1 engineering objectives, with native Ubuntu 26.04 `/usr/sbin/apparmor_parser`. This is **not** a published 26.04 STIG mapping; inherited rules contain optional-path prerequisites and require native 26.04 image inspection.
+- **Debian 12/13 (8 variants):** Added account-admin and privileged binary execution, session/logon record watches, root xattr auditing, and denied-file access expansion. Package-dependent `sudo`, `cron`, `acl`, SSH, PAM helper, and AppArmor watches remain **conditional** so a minimal install is not guaranteed to load them. These are **Debian enterprise objectives**, not a Ubuntu product STIG certification.
+- **Proxmox VE:** Debian profile is a starting point, not drop-in proof. The Proxmox `/etc/pve` configuration mount uses `pmxcfs` (FUSE) and must not be assumed to behave as an ordinary auditd file watch. Use supported platform/API/task/cluster logging as companion evidence; do not install the Ubuntu 24.04 STIG as if it applies to Debian.
+- The remaining OS profiles, all Tier 2 rules, Tier 3 and cloud-host rules are unchanged in active semantics. **No profile is production-approved.**
+
+**Offline prerequisites:** Presence of an executable in a vendor repository is not evidence it is installed on the deployed image. `/var/log/sudo.log`, `/var/log/faillog`, `/var/log/journal`, `/var/spool/cron` and optional utilities may be absent. Resolve via approved image prerequisites or documented exception before loading the package.
+
+**Authorities:** <https://www.cyber.mil/stigs/>, <https://www.cyber.mil/stigs/stig-announcements>, Ubuntu 22.04 V2R10 archived check/fix text at <https://cyber.trackr.live/stig/Canonical_Ubuntu_22.04_LTS/2/10>, Proxmox admin guide <https://pve.proxmox.com/pve-docs/pve-admin-guide.pdf>.
+
+## What is in the package
+
+- 40 OS/hosting-environment combinations: on-premises, AWS, Azure and GCP.
+- **Two mutually exclusive architecture choices per OS/environment:** existing profile root is **x86_64**; its nested `aarch64/` subtree is **ARM64**. A total of **80 architecture-selectable implementations**, 25 `.rules` files each (2,000 `.rules` files).
+- Exactly three documents under `docs/`, plus this README and the rule files. No deployment script, generated combined rule file, new catalog, or automation is bundled.
+- **Tier 1 + Tier 2 mandatory** under the enterprise Minimum Security Requirement (MSR), Tier 3 as threat-directed, Finalize last.
+
+## Choose the exact rule directory
+
+```text
+rules/
+  on-prem/<os-version>/                  # x86_64
+  on-prem/<os-version>/aarch64/          # ARM64
+  aws/<os-version>/                      # x86_64
+  aws/<os-version>/aarch64/              # ARM64
+  azure/<os-version>/                    # x86_64
+  azure/<os-version>/aarch64/            # ARM64
+  gcp/<os-version>/                      # x86_64
+  gcp/<os-version>/aarch64/              # ARM64
+```
+
+In each selected directory (at either architecture level):
+
+```text
+tier-1-baseline/        00-foundation; 10-14 OS/compliance; 18-failure-control
+tier-2-core-security/   20-28 active SOC/IR; 29 configuration-integrity candidate
+tier-3-threat-specific/ 30-exploitation + individually selected CVE-YYYY-NNNN.rules
+finalize/               99-finalize.rules (-e 2; last)
+```
+
+**DO NOT** copy both the root and `aarch64/` rules, recursively install the parent profile, or combine multiple OS/environment profiles. Copy only the tier directories for the selected architecture to the host's audit rule directory after validation.
+
+### Supported OS and environment candidates
+
+| Hosting environment | OS directories |
+|---|---|
+| on-prem | `rhel8`, `rhel9`, `rhel10`, `almalinux9`, `rocky8`, `rocky9`, `ubuntu2204`, `ubuntu2404`, `ubuntu2604`, `oraclelinux8`, `oraclelinux9`, `sles15`, `debian12`, `debian13` |
+| AWS | `amazon-linux-2023`, `amazon-linux-2027`, `rhel9`, `rhel10`, `ubuntu2204`, `ubuntu2404`, `ubuntu2604`, `almalinux9`, `oraclelinux9`, `rocky9` |
+| Azure | `rhel9`, `rhel10`, `ubuntu2204`, `ubuntu2404`, `ubuntu2604`, `sles15`, `almalinux9`, `oraclelinux9` |
+| GCP | `rhel9`, `rhel10`, `ubuntu2204`, `ubuntu2404`, `ubuntu2604`, `debian12`, `debian13`, `rocky9` |
+
+**Amazon Linux 2027:** preview-only candidate pending general availability, supported image testing, and official/approved compliance mapping. **Ubuntu 26.04:** engineering candidate; do not apply Ubuntu 24.04 STIG V-IDs as if they were a Ubuntu 26.04 product STIG.
+
+## Changes inherited from v0.12 and v0.13 (relative to v0.11)
+
+1. **ARM64:** Added a complete `aarch64/` subprofile for every listed OS/cloud profile; translated unsupported legacy x86 syscall names to native ARM64 `*at` / `*at2` equivalents where appropriate and removed x86-only b32 rules. Architecture mapping is tested against the Linux Audit syscall-name library, *not* against every guest kernel.
+2. **Execution:** Added explicit `execveat` coverage for interactive and root execution, and privilege-transition coverage. Added x86_64 b32 counterparts to additional syscall telemetry for hosts supporting the compatibility ABI.
+3. **Ubuntu 24.04:** Preserved the 64 exact source directives from the user-supplied Ubuntu 24.04 V1R7 extraction on each x86_64 profile; ARM64 is a *translated engineering candidate*, not an exact DISA x86 fix-text match.
+4. **RHEL 9:** Added the 81 source directives from the previously assembled **RHEL 9 V2R10 reference package**, including missing privileged command, permissions, identity, module, and cron coverage, with per-line reference comments. The older local reference is **not independently verified against the latest authoritative DISA release** and contains paths requiring image-specific prerequisites.
+5. **Other systems:** Added enterprise baseline changes for audit/PAM files, identity resolution, modern access/deletion/permission syscalls, and mount/group privilege operations. These are not substitutes for product-specific STIG mapping.
+6. **Cloud guests:** Added active auditing of root daemon execution (`execve`/`execveat`), daemon outbound connection attempts, and noninteractive root `/etc` changes. Provider-specific SSM/waagent/Google guest-agent/CLI/credential watches remain **explicit conditional requirements**, since a hard-coded watch against a missing file can fail to load. Exact cloud API operations **require cloud-native logs**.
+7. **Documentation:** Updated deployment, architecture selection, live validation, cloud logging, risk/waiver decisions and source maintenance. All user-supplied v0.11 files remain the baseline for this revision.
+
+
+## v0.15 targeted review corrections (relative to v0.14)
+
+- **Debian 12/13:** Added both-architecture auditing of root-session kernel-module syscalls and x86_64 b32 privilege-transition coverage. Added source-linked conditional candidates for `modprobe`, `kmod`, `fdisk`, cron directories, persistent journal, and sudo file logging. The existing sudo, SSH, ACL, PAM and AppArmor candidates remain conditional on installed packages. **Do not claim active Ubuntu-rule parity:** absent files and optional packages can prevent audit rules from loading.
+- **Proxmox:** PVE 8 uses Debian 12 and is beyond upstream Proxmox support as of August 2026; PVE 9 uses Debian 13. Debian base profiles are engineering candidates, not Proxmox-specific certified policies. PVE cluster configuration under `/etc/pve` is `pmxcfs`; pair host audit with Proxmox API/task/cluster logs. No unconditional FUSE watches were introduced.
+- **Ubuntu 22.04:** Replaced inaccurate V-ID references (`useradd` **V-288815**, cron **V-274862**) and inserted per-rule V2R10 objective mappings where a matching audit objective can be identified. `-e 2` carries **V-288816** in Finalize. These are source **traceability references**, not an independently verified full DISA XCCDF check/fix equivalence assessment.
+- **Provenance:** Normalized the package-version header to `v0.15` in **all 1,520 `.rules` files**, retaining historical comments describing earlier releases. No rule was silently removed or any fail-secure setting downgraded.
+- **Availability:** `-f 2` remains unchanged. A local `-f 1` deviation requires explicit approval and cannot be inferred from this review.
+
+## Security and operational gates — not resolved by static tests
+
+- **STIG completeness:** Ubuntu 24.04 has review-derived x86_64 source-line reconciliation; Ubuntu 22.04 has an expanded but not source-line-certified V2R10 candidate; RHEL 9 has a prior local reference (81/81). Other OS versions require current product-specific DISA STIG/SRG checks, file/path applicability, and V-ID-level evidence. **No profile can be represented as fully STIG-validated.**
+- **Missing paths:** `auditctl`/`augenrules` can reject `-w`, `path=`, and `dir=` watches if referenced files/directories are absent. The Ubuntu and RHEL 9 source-based candidates in particular contain required-path watches that may be absent on minimal images. Validate and resolve through prerequisite installation, approved N/A, or exception **before loading**.
+- **Cloud guest agents:** Mandatory provider-specific agent/credential/CLI monitoring is conditional on what is installed. The generic root daemon rules are **not** equivalent to exact agent configuration watches. An applicable but inactive agent watch needs remediation or an approved exception.
+- **Cloud control plane:** CloudTrail (AWS), Azure Activity Log (Azure), and Cloud Audit Logs (GCP) are mandatory companion sources for security-group/NSG/firewall, role/IAM, and API changes. `auditd` cannot record remote management-plane operations directly.
+- **Live tests:** None of these 80 architecture-specific candidates was kernel-loaded, end-to-end event-tested, performance-tested, or Splunk-validated as part of offline packaging.
+- **Availability:** `-D` clears existing audit rules; `-f 2` may panic on critical audit failure; `-e 2` makes rules immutable until reboot. Assess with the appropriate authority before any production deployment.
+- **Volume:** Tier 2 `execve`, `execveat`, filesystem changes, `connect`, and daemon network monitoring can be expensive. Performance failures require remediation/tuning within the required security objective or an approved waiver.
+
+See `docs/01-IMPLEMENTATION-GUIDE.md` for safe selection/staging, `docs/02-MINIMUM-SECURITY-REQUIREMENT-AND-WAIVER.md` for exceptions, and `docs/03-RULE-SOURCING-AND-MAINTENANCE.md` for official sources and refresh instructions.

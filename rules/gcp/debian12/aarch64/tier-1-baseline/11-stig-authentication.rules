@@ -1,0 +1,41 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | gcp/debian12
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [gcp/debian12]
+# Tier: tier-1-baseline
+# Purpose: PAM/security authentication configuration
+# Source/authority: DISA applicable product STIG/SRG objective; enterprise authentication coverage
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# PAM directory is expected for the supported full Linux VM/server image.
+-a always,exit -F arch=b64 -F dir=/etc/pam.d -F perm=wa -k t1_authpolicy
+# OPTIONAL when SSH server and /etc/ssh are installed:
+# -a always,exit -F arch=b64 -F dir=/etc/ssh -F perm=wa -k t1_sshpolicy
+# Successful/failed SSH logins are normally logged by sshd/PAM; forward those logs.
+# Do not interpret these file-watch rules as a replacement for authentication logs.
+
+# v0.14: audit and PAM configuration tamper monitoring
+-a always,exit -F arch=b64 -F dir=/etc/security -F perm=wa -k t1_pam_security
+-a always,exit -F arch=b64 -F dir=/etc/audit -F perm=wa -k t1_audit_config
+# Conditional: monitor /etc/ssh, /etc/sudoers and /etc/sudoers.d when present; missing paths must be addressed or waived.
+# -a always,exit -F arch=b64 -F dir=/etc/ssh -F perm=wa -k t1_ssh_config
+# -a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k t1_sudo_config
+# -a always,exit -F arch=b64 -F dir=/etc/sudoers.d -F perm=wa -k t1_sudo_config
+
+# Debian enterprise baseline: privileged-command execution (package-path candidate).
+-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -k privileged-su
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chsh
+-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chfn
+-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -k privileged-newgrp
+
+# CONDITIONAL: activate applicable paths after verifying installed Debian package contents.
+# Requires cron package; do not claim covered until enabled.
+# -a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -k privileged-crontab
+# Requires libpam-modules-bin package; do not claim covered until enabled.
+# -a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=unset -k privileged-pam_timestamp_check
+
+# v0.15: A sudo file-log is NOT a Debian default. Configure sudo logfile before enabling:
+# -w /var/log/sudo.log -p wa -k t1_sudo_maintenance
+# Required sudo executions and /etc/sudoers(.d) policy changes remain conditional
+# unless the sudo package/configuration paths are verified and enabled.

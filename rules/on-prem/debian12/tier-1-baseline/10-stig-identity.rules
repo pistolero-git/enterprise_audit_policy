@@ -1,0 +1,44 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | on-prem/debian12
+# Enterprise Linux Audit v0.16  |  [on-prem/debian12]
+# Tier: tier-1-baseline
+# Purpose: user/group account database modifications
+# Source/authority: DISA applicable product STIG/SRG objective; Linux Audit upstream examples
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -k t1_identity
+-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -k t1_identity
+-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -k t1_identity
+-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -k t1_identity
+# OPTIONAL (requires existing file): /etc/security/opasswd
+# -a always,exit -F arch=b64 -F path=/etc/security/opasswd -F perm=wa -k t1_identity
+
+# v0.14: additional identity/authentication configuration monitoring (enterprise baseline)
+-a always,exit -F arch=b64 -F path=/etc/nsswitch.conf -F perm=wa -k t1_identity_resolve
+
+# Enterprise requirement: authentication/session record changes (not a Debian product STIG).
+# The paths are standard on full installations but not guaranteed on minimal images.
+-w /var/log/wtmp -p wa -k t1_logins
+-w /var/log/btmp -p wa -k t1_logins
+# Conditional: /run/utmp may be absent until a login/session is established.
+# -w /run/utmp -p wa -k t1_logins
+# Conditional: modern logind environments may not create these legacy files.
+# -w /var/log/lastlog -p wa -k t1_logins
+# -w /var/log/faillog -p wa -k t1_logins
+# /etc/security/opasswd depends on password-history configuration; directory monitored in Tier 1.
+# -w /etc/security/opasswd -p wa -k t1_identity
+
+# Debian enterprise baseline: privileged-command execution (package-path candidate).
+-a always,exit -F path=/usr/sbin/useradd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-useradd
+-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-usermod
+-a always,exit -F path=/usr/sbin/userdel -F perm=x -F auid>=1000 -F auid!=unset -k privileged-userdel
+-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-passwd
+-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-gpasswd
+-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chage
+
+# v0.15: Debian 12/13 optional legacy login files (including Proxmox deployments):
+# /var/run is commonly a /run alias; audit the real file only if it exists.
+# -w /var/run/utmp -p wa -k t1_logins
+# Debian 13 may use newer lastlog implementations; /var/log/lastlog and faillog are NOT universal.
+# /etc/security/opasswd requires a password-history implementation and a real file.

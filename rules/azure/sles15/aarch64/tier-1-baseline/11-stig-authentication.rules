@@ -1,0 +1,24 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | azure/sles15
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [azure/sles15]
+# Tier: tier-1-baseline
+# Purpose: PAM/security authentication configuration
+# Source/authority: DISA applicable product STIG/SRG objective; enterprise authentication coverage
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# PAM directory is expected for the supported full Linux VM/server image.
+-a always,exit -F arch=b64 -F dir=/etc/pam.d -F perm=wa -k t1_authpolicy
+# OPTIONAL when SSH server and /etc/ssh are installed:
+# -a always,exit -F arch=b64 -F dir=/etc/ssh -F perm=wa -k t1_sshpolicy
+# Successful/failed SSH logins are normally logged by sshd/PAM; forward those logs.
+# Do not interpret these file-watch rules as a replacement for authentication logs.
+
+# v0.13: audit and PAM configuration tamper monitoring
+-a always,exit -F arch=b64 -F dir=/etc/security -F perm=wa -k t1_pam_security
+-a always,exit -F arch=b64 -F dir=/etc/audit -F perm=wa -k t1_audit_config
+# Conditional: monitor /etc/ssh, /etc/sudoers and /etc/sudoers.d when present; missing paths must be addressed or waived.
+# -a always,exit -F arch=b64 -F dir=/etc/ssh -F perm=wa -k t1_ssh_config
+# -a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k t1_sudo_config
+# -a always,exit -F arch=b64 -F dir=/etc/sudoers.d -F perm=wa -k t1_sudo_config

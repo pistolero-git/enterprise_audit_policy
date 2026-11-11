@@ -1,0 +1,27 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | aws/rocky9
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [aws/rocky9]
+# Tier: tier-1-baseline
+# Purpose: permission, deletion, module, time, and failed-file-access audit
+# Source/authority: DISA applicable product STIG/SRG objectives; linux-audit audit-userspace 30-stig.rules
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+-a always,exit -F arch=b64 -S fchmodat,fchmodat2,fchmod -F auid>=1000 -F auid!=unset -k t1_perm_mod
+-a always,exit -F arch=b64 -S fchownat,fchown -F auid>=1000 -F auid!=unset -k t1_perm_mod
+-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k t1_xattr
+-a always,exit -F arch=b64 -S renameat,renameat2,unlinkat -F auid>=1000 -F auid!=unset -k t1_delete
+-a always,exit -F arch=b64 -S openat,openat2,truncate,ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=unset -k t1_access_fail
+-a always,exit -F arch=b64 -S openat,openat2,truncate,ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -k t1_access_fail
+-a always,exit -F arch=b64 -S init_module,finit_module,delete_module -F auid>=1000 -F auid!=unset -k t1_module
+-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -F auid>=1000 -F auid!=unset -k t1_time
+# Broader syscall coverage may be required by the exact product STIG; reconcile it before compliance approval.
+
+# v0.13: modern syscall and mount/privilege telemetry; enterprise coverage, not a STIG attestation
+-a always,exit -F arch=b64 -S openat2 -F exit=-EACCES -F auid>=1000 -F auid!=unset -k t1_access_fail_modern
+-a always,exit -F arch=b64 -S openat2 -F exit=-EPERM -F auid>=1000 -F auid!=unset -k t1_access_fail_modern
+-a always,exit -F arch=b64 -S renameat2 -F auid>=1000 -F auid!=unset -k t1_delete_modern
+-a always,exit -F arch=b64 -S fchmodat2 -F auid>=1000 -F auid!=unset -k t1_perm_mod_modern
+-a always,exit -F arch=b64 -S mount,umount2 -F auid>=1000 -F auid!=unset -k t1_mount
+-a always,exit -F arch=b64 -S setgid,setregid,setresgid -F auid>=1000 -F auid!=unset -k t1_group_priv

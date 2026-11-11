@@ -1,0 +1,27 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | azure/ubuntu2204
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16 | azure/ubuntu2204 | mandatory Tier 2 cloud host controls
+# Source context: Azure Linux Agent and cloud-init; Activity Log required for NSG/RBAC
+# Host auditd cannot observe cloud-native API calls, security-group, IAM or NSG changes initiated remotely.
+# Cloud native API logging is a mandatory companion; see Implementation Guide.
+# No agent-specific path is assumed installed; missing agent paths MUST be assessed for this image.
+# Monitors root daemon automation with unset loginuid (not normal interactive root sessions).
+-a always,exit -F arch=b64 -S execve,execveat -F auid=unset -F euid=0 -k t2_azure_daemon_exec
+# Root-owned cloud daemon outbound connections; SOCKADDR does not expose cloud API operation semantics.
+-a always,exit -F arch=b64 -S connect -F auid=unset -F euid=0 -k t2_azure_daemon_connect
+# Includes cloud-init/guest provisioning edits in /etc; not a substitute for exact agent watches.
+-a always,exit -F arch=b64 -F dir=/etc -F perm=wa -F auid=unset -F euid=0 -k t2_azure_root_config
+
+
+# Azure path evidence: /etc/waagent.conf is the vendor-standard config,
+# but Ubuntu images commonly delegate provisioning to cloud-init, and
+# the agent state path depends on installation/image. Do not assume az CLI.
+# Source: https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/agent-linux
+# CONDITIONAL mandatory coverage: resolve installed paths on the target cloud image.
+# The following watches are NOT automatically activated because a missing path may reject the rule.
+# If component installed and relevant, activate its exact file/dir watch or document an approved N/A.
+# -a always,exit -F arch=b64 -F path=/etc/waagent.conf -F perm=wa -k t2_azure_agent_conf
+# -a always,exit -F arch=b64 -F dir=/var/lib/waagent -F perm=wa -k t2_azure_agent_conf
+# -a always,exit -F arch=b64 -F dir=/etc/cloud -F perm=wa -k t2_azure_agent_conf
+# -a always,exit -F path=/usr/bin/az -F perm=x -k t2_azure_cli
+# -a always,exit -F arch=b64 -F dir=/root/.azure -F perm=wa -k t2_azure_agent_conf

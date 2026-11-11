@@ -1,0 +1,15 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | gcp/rhel9
+# Enterprise Linux Audit v0.16  |  [gcp/rhel9]
+# Tier: tier-2-core-security
+# Purpose: network connect() attribution to interactive-user processes
+# Source/authority: Enterprise SOC/IR minimum (former Tier 3)
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# HIGH VOLUME on clients, build hosts and network-active applications.
+-a always,exit -F arch=b64 -S connect -F auid>=1000 -F auid!=unset -k t2_user_connect
+# This does NOT reveal HTTP API operations or TLS payloads; use network/cloud logs.
+
+# v0.13: x86_64 compatibility ABI (b32) variants; omit on aarch64.
+-a always,exit -F arch=b32 -S connect -F auid>=1000 -F auid!=unset -k t2_user_connect

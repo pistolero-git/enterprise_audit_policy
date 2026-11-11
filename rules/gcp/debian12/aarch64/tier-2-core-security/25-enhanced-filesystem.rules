@@ -1,0 +1,14 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | gcp/debian12
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [gcp/debian12]
+# Tier: tier-2-core-security
+# Purpose: direct-root session permission/file destruction behavior
+# Source/authority: Enterprise SOC/IR minimum (former Tier 3)
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# Can be noisy for maintenance tasks performed from interactive root sessions.
+-a always,exit -F arch=b64 -S fchmodat,fchmodat2,fchmod -F auid=0 -k t2_root_filechange
+-a always,exit -F arch=b64 -S fchownat,fchown -F auid=0 -k t2_root_filechange
+-a always,exit -F arch=b64 -S unlinkat,renameat,renameat2 -F auid=0 -k t2_root_filedelete

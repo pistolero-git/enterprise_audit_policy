@@ -1,0 +1,31 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | gcp/debian12
+# Enterprise Linux Audit v0.16  |  [gcp/debian12]
+# Tier: tier-1-baseline
+# Purpose: MAC administrative policy changes and enforcement context
+# Source/authority: DISA applicable product STIG/SRG as applicable; vendor SELinux/AppArmor docs
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# MAC technology is image-dependent for this OS.
+# If AppArmor is installed: monitor /etc/apparmor.d and apparmor_parser.
+# If SELinux is installed: monitor /etc/selinux and SELinux policy utilities.
+# Do not mark applicable MAC controls N/A without documented review.
+
+# Debian: AppArmor is used by standard installations; enable exact watch if /etc/apparmor.d exists.
+# -a always,exit -F arch=b64 -F dir=/etc/apparmor.d -F perm=wa -k t1_apparmor_policy
+# Inspect aa-status and ensure that AppArmor denials reach auditd/journald and Splunk.
+
+# Debian package inventory caveat: Debian 12 PAM helper binaries can use /sbin/unix_update, while Debian 13 uses /usr/sbin; verify package and usr-merge aliases.
+# https://packages.debian.org/bookworm/amd64/libpam-modules-bin/filelist
+# https://packages.debian.org/trixie/amd64/libpam-modules-bin/filelist
+
+# Debian enterprise MAC objective: audit AppArmor profile reloads if package is installed.
+# CONDITIONAL — /etc/apparmor.d/ path and AppArmor package must be verified.
+# -a always,exit -F arch=b64 -F dir=/etc/apparmor.d -F perm=wa -k t1_apparmor_policy
+# -a always,exit -F path=/sbin/apparmor_parser -F perm=x -F auid>=1000 -F auid!=unset -k t1_apparmor_parser
+
+# v0.15: For Proxmox/Debian hosts with AppArmor installed, enable the
+# /etc/apparmor.d directory and apparmor_parser execution candidates above.
+# Debian uses AppArmor only where the apparmor package is installed/enabled;
+# root process execution collection does not substitute for policy-load auditing.

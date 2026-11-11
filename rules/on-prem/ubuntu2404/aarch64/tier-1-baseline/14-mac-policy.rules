@@ -1,0 +1,18 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | on-prem/ubuntu2404
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [on-prem/ubuntu2404]
+# Tier: tier-1-baseline
+# Purpose: MAC administrative policy changes and enforcement context
+# Source/authority: DISA applicable product STIG/SRG as applicable; vendor SELinux/AppArmor docs
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# AppArmor policies; AppArmor denials are logged through audit/journal/syslog as configured.
+-a always,exit -F arch=b64 -F dir=/etc/apparmor.d -F perm=wa -k t1_apparmor_policy
+# STIG V1R7 V-270793 / UBTU-24-900220: audit apparmor_parser execution.
+# Ubuntu 24.04 apparmor package manifest lists /sbin/apparmor_parser; DO NOT
+# substitute the Ubuntu 26.04 /usr/sbin path without verifying this image.
+# Source: https://packages.ubuntu.com/noble/all/apparmor/filelist
+# A missing /sbin/apparmor_parser requires investigation/remediation/waiver, not silent omission.
+-a always,exit -F path=/sbin/apparmor_parser -F perm=x -F auid>=1000 -F auid!=-1 -k perm_chng

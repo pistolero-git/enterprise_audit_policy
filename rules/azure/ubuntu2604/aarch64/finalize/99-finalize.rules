@@ -1,0 +1,12 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | azure/ubuntu2604
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [azure/ubuntu2604]
+# Tier: finalize
+# Purpose: lock audit policy AFTER all selected rules are validated
+# Source/authority: DISA applicable STIG if required; Linux Audit upstream finalization
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# Immutable audit mode; audit rule changes generally require reboot afterwards.
+-e 2

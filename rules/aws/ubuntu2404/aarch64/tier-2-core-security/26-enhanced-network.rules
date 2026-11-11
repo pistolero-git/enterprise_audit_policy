@@ -1,0 +1,13 @@
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | aws/ubuntu2404
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [aws/ubuntu2404]
+# Tier: tier-2-core-security
+# Purpose: network connect() attribution to interactive-user processes
+# Source/authority: Enterprise SOC/IR minimum (former Tier 3)
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# HIGH VOLUME on clients, build hosts and network-active applications.
+-a always,exit -F arch=b64 -S connect -F auid>=1000 -F auid!=unset -k t2_user_connect
+# This does NOT reveal HTTP API operations or TLS payloads; use network/cloud logs.

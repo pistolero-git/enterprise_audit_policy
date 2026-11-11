@@ -1,0 +1,72 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | azure/rhel9
+# Enterprise Linux Audit v0.16  |  [azure/rhel9]
+# Tier: tier-1-baseline
+# Purpose: user/group account database modifications
+# Source/authority: DISA applicable product STIG/SRG objective; Linux Audit upstream examples
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# OPTIONAL (requires existing file): /etc/security/opasswd
+# -a always,exit -F arch=b64 -F path=/etc/security/opasswd -F perm=wa -k t1_identity
+
+# v0.13 RHEL 9 candidate additions from prior RHEL 9 V2R10 source bundle.
+# Prior bundle contained V-258176..V-258228; reconcile each current product STIG.
+# Verify ALL referenced paths on this exact image before enabling; missing targets block loading.
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-016 / V-258191; verify with current DISA source.
+-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chage
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-017 / V-258192; verify with current DISA source.
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-020 / V-258194; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/usr/bin/gpasswd -F perm=x -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-020 / V-258194; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/usr/bin/gpasswd -F perm=x -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-022 / V-258196; verify with current DISA source.
+-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-024 / V-258198; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/usr/bin/passwd -F perm=x -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-024 / V-258198; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/usr/bin/passwd -F perm=x -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-035 / V-258209; verify with current DISA source.
+-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-usermod
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-036 / V-288832; verify with current DISA source.
+-a always,exit -F path=/usr/sbin/useradd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-useradd
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-044 / V-258217; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/etc/sudoers -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-044 / V-258217; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-045 / V-258218; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/etc/sudoers.d -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-045 / V-258218; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/etc/sudoers.d -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-046 / V-258219; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/etc/group -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-046 / V-258219; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-047 / V-258220; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/etc/gshadow -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-047 / V-258220; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-048 / V-258221; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/etc/security/opasswd -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-048 / V-258221; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/etc/security/opasswd -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-049 / V-258222; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/etc/passwd -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-049 / V-258222; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-050 / V-258223; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/etc/shadow -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-050 / V-258223; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -k identity
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-051 / V-258224; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/var/log/faillock -F perm=wa -F auid>=1000 -F auid!=unset -k logins
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-051 / V-258224; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/var/log/faillock -F perm=wa -F auid>=1000 -F auid!=unset -k logins
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-052 / V-258225; verify with current DISA source.
+-a always,exit -F arch=b32 -F path=/var/log/lastlog -F perm=wa -F auid>=1000 -F auid!=unset -k logins
+# Prior RHEL 9 V2R10 local reference: AUD-CMP-052 / V-258225; verify with current DISA source.
+-a always,exit -F arch=b64 -F path=/var/log/lastlog -F perm=wa -F auid>=1000 -F auid!=unset -k logins
+
+# v0.13: additional identity/authentication configuration monitoring (enterprise baseline)
+-a always,exit -F arch=b64 -F path=/etc/nsswitch.conf -F perm=wa -k t1_identity_resolve

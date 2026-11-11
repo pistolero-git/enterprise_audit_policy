@@ -1,0 +1,18 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | azure/sles15
+# Enterprise Linux Audit v0.16  |  [azure/sles15]
+# Tier: tier-1-baseline
+# Purpose: MAC administrative policy changes and enforcement context
+# Source/authority: DISA applicable product STIG/SRG as applicable; vendor SELinux/AppArmor docs
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# AppArmor policies; AppArmor denials are logged through audit/journal/syslog as configured.
+-a always,exit -F arch=b64 -F dir=/etc/apparmor.d -F perm=wa -k t1_apparmor_policy
+# AppArmor parser binary must exist on the image before enabling this rule.
+# Ubuntu 24.04 STIG UBTU-24-900220 requires auditing apparmor_parser execution.
+# -a always,exit -F path=/sbin/apparmor_parser -F perm=x -F auid>=1000 -F auid!=unset -k t1_apparmor_parser
+# Enable the executable rule if the requirement applies; missing capability needs remediation/waiver.
+
+# SUSE AppArmor administration; apparmor_parser may be under /usr/sbin or /sbin.
+# -a always,exit -F path=/usr/sbin/apparmor_parser -F perm=x -k t1_apparmor_load

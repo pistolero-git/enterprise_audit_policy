@@ -1,0 +1,13 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | azure/rhel9
+# Enterprise Linux Audit v0.16  |  [azure/rhel9]
+# Tier: tier-2-core-security
+# Purpose: package repository tampering
+# Source/authority: Enterprise SOC/IR minimum; distro package manager vendor documentation
+# Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+
+# RPM-family repository config changes (path normally exists).
+-a always,exit -F arch=b64 -F dir=/etc/yum.repos.d -F perm=wa -k t2_pkg_repo
+# OPTIONAL if present: /etc/dnf/dnf.conf and /etc/dnf/dnf5-plugins
+# -a always,exit -F arch=b64 -F path=/etc/dnf/dnf.conf -F perm=wa -k t2_pkg_repo

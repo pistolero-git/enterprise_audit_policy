@@ -1,0 +1,68 @@
+# TARGET ARCHITECTURE: x86_64 | v0.16 | gcp/ubuntu2404
+# Enterprise Linux Audit v0.16 | gcp/ubuntu2404
+# Tier 1 — Ubuntu 24.04 audit-rule candidate
+# Source: Canonical Ubuntu 24.04 LTS DISA STIG V1R7, manual XCCDF fix text
+# Source archive: https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_CAN_Ubuntu_24-04_LTS_V1R7_STIG.zip
+# Architecture: reviewer source is x86_64 with b32 + b64; validate ABI/paths on target host.
+# IMPORTANT: missing paths need remediation or approved N/A/exception; do not silently ignore errors.
+
+## Tier: 1 — Baseline (Canonical Ubuntu 24.04 LTS STIG V1R7)
+## Functional area: identity, account administration, login records
+## V-270684 — Ubuntu 24.04 LTS must generate audit records for all account creations, modifications, disabling, and termination events
+-w /etc/passwd -p wa -k usergroup_modification
+
+## V-270685 — Ubuntu 24.04 LTS must generate audit records for all account creations, modifications, disabling, and termination events
+-w /etc/group -p wa -k usergroup_modification
+
+## V-270686 — Ubuntu 24.04 LTS must generate audit records for all account creations, modifications, disabling, and termination events
+-w /etc/shadow -p wa -k usergroup_modification
+
+## V-270687 — Ubuntu 24.04 LTS must generate audit records for all account creations, modifications, disabling, and termination events
+-w /etc/gshadow -p wa -k usergroup_modification
+
+## V-270688 — Ubuntu 24.04 LTS must generate audit records for all account creations, modifications, disabling, and termination events
+# PREREQUISITE: /etc/security/opasswd is created/used only with configured
+# password-history mechanisms; never assume it exists on cloud images.
+-w /etc/security/opasswd -p wa -k usergroup_modification
+
+## V-270810 — Ubuntu 24.04 LTS must generate audit records for the /var/log/wtmp file.
+-w /var/log/wtmp -p wa -k logins
+
+## V-270811 — Ubuntu 24.04 LTS must generate audit records for the /var/run/utmp file.
+-w /var/run/utmp -p wa -k logins
+
+## V-270812 — Ubuntu 24.04 LTS must generate audit records for the /var/log/btmp file.
+-w /var/log/btmp -p wa -k logins
+
+## V-270797 — Ubuntu 24.04 LTS must generate audit records for the use and modification of the lastlog file.
+-w /var/log/lastlog -p wa -k logins
+
+## V-270796 — Ubuntu 24.04 LTS must generate audit records for the use and modification of faillog file.
+# PREREQUISITE: /var/log/faillog is legacy/runtime-image dependent;
+# assess STIG remediation or approved applicability if absent.
+-w /var/log/faillog -p wa -k logins
+
+## V-288818 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the useradd command.
+-a always,exit -F path=/usr/sbin/useradd -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-useradd
+
+## V-270802 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the usermod command.
+-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-usermod
+
+## V-270801 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the chage command.
+-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-chage
+
+## V-270800 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the gpasswd command.
+-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-gpasswd
+
+## V-270798 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the passwd command.
+-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-passwd
+
+## V-270799 — Ubuntu 24.04 LTS must generate audit records for successful/unsuccessful uses of the unix_update command.
+# PACKAGE PATH: Ubuntu 24.04 libpam-modules-bin lists /usr/sbin/unix_update.
+# This STIG extraction says /sbin/unix_update; check usr-merge alias resolves
+# to the packaged binary, rather than assuming it does on every image.
+# Source: https://packages.ubuntu.com/noble-updates/amd64/libpam-modules-bin/filelist
+-a always,exit -F path=/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-unix-update
+
+# v0.13: additional identity/authentication configuration monitoring (enterprise baseline)
+-a always,exit -F arch=b64 -F path=/etc/nsswitch.conf -F perm=wa -k t1_identity_resolve

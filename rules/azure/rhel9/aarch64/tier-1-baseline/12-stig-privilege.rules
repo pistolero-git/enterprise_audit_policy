@@ -1,0 +1,41 @@
+# RHEL 9 ARM translation from older local V2R10 source; not official ARM-compliance evidence.
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | azure/rhel9
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16  |  [azure/rhel9]
+# Tier: tier-1-baseline
+# Purpose: privilege transitions and sudo policy changes
+# Source/authority: DISA applicable product STIG/SRG objective; linux-audit sample rules
+# Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# Release state: engineering candidate; NOT independently certified STIG compliant.
+
+# PACKAGE PREFLIGHT: postdrop/postqueue require Postfix; userhelper requires the corresponding RHEL package.
+# Verify RPM file manifests for the exact RHEL 9 repository/image; this
+# source-derived STIG file preserves applicable rules rather than dropping them.
+
+# OPTIONAL if sudo installed:
+# -a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -k t1_sudoers
+# -a always,exit -F arch=b64 -F dir=/etc/sudoers.d -F perm=wa -k t1_sudoers
+# Host-specific privileged executables may require additional STIG-derived rules.
+
+# v0.13 RHEL 9 candidate additions from prior RHEL 9 V2R10 source bundle.
+# Prior bundle contained V-258176..V-258228; reconcile each current product STIG.
+# Verify ALL referenced paths on this exact image before enabling; missing targets block loading.
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv
+-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount
+-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -k privileged-crontab
+-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd
+-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
+-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount
+-a always,exit -F path=/usr/sbin/init -F perm=x -F auid>=1000 -F auid!=unset -k privileged-init
+-a always,exit -F path=/usr/sbin/poweroff -F perm=x -F auid>=1000 -F auid!=unset -k privileged-poweroff
+-a always,exit -F path=/usr/sbin/reboot -F perm=x -F auid>=1000 -F auid!=unset -k privileged-reboot
+-a always,exit -F path=/usr/sbin/shutdown -F perm=x -F auid>=1000 -F auid!=unset -k privileged-shutdown
+-a always,exit -F arch=b64 -S umount2 -F auid>=1000 -F auid!=unset -k privileged-umount
+
+# v0.13: preserve source execve rules; include the separate execveat syscall for privilege transitions.
+-a always,exit -F arch=b64 -S execveat -C uid!=euid -F euid=0 -k t1_execveat_priv
+-a always,exit -F arch=b64 -S execveat -C gid!=egid -F egid=0 -k t1_execveat_priv

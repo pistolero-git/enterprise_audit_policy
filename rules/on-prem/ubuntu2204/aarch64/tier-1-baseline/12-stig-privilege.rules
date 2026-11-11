@@ -1,0 +1,77 @@
+# TARGET ARCHITECTURE: aarch64 | v0.16 | on-prem/ubuntu2204
+# Tier 1 target: Ubuntu 22.04 LTS (V2R10 reconciliation candidate)
+# Engineering basis: Ubuntu 24.04 V1R7 audit objectives, not an exact source-rule extraction
+# IMPORTANT: this profile is NOT an approved product STIG implementation.
+# Vendor and STIG-specific path prerequisites must be met before deployment.
+# ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
+# Enterprise Linux Audit v0.16 | on-prem/ubuntu2204
+# Tier 1 — Ubuntu 22.04 candidate audit-rule candidate
+# ARM64 variant is translated from a reviewer x86_64 source; independently validate ARM64 STIG applicability and paths.
+# IMPORTANT: missing paths need remediation or approved N/A/exception; do not silently ignore errors.
+
+## Functional area: privilege escalation, DAC modification, access failures, file deletion
+# UBTU-22-654230 / V-260648 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -F key=execpriv
+# UBTU-22-654230 / V-260648 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -F key=execpriv
+
+# UBTU-22-654105 / V-260623 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=-1 -k priv_cmd
+
+# UBTU-22-654110 / V-260624 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid>=1000 -F auid!=-1 -k priv_cmd
+
+# UBTU-22-654065 / V-260615 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-mount
+
+# UBTU-22-654115 / V-260625 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-umount
+
+# UBTU-22-654090 / V-260620 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-ssh
+
+# UBTU-22-654095 / V-260621 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F path=/usr/lib/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-ssh
+
+# UBTU-22-654180 / V-260638 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=-1 -k perm_mod
+# UBTU-22-654180 / V-260638 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod
+
+# UBTU-22-654160 / V-260634 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S fchownat,fchown -F auid>=1000 -F auid!=-1 -k perm_chng
+
+# UBTU-22-654155 / V-260633 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S fchmodat,fchmodat2,fchmod -F auid>=1000 -F auid!=-1 -k perm_chng
+
+# UBTU-22-654165 / V-260635 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S openat,openat2,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=-1 -k perm_access
+# UBTU-22-654165 / V-260635 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S openat,openat2,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=-1 -k perm_access
+
+# UBTU-22-654025 / V-260607 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=-1 -k perm_chng
+
+# UBTU-22-654085 / V-260619 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=-1 -k perm_chng
+
+# OPTIONAL PACKAGE PREREQUISITE: /usr/bin/chacl is provided by Ubuntu acl;
+# validate installation before loading this inherited executable watch.
+# Prior release package example (validate Jammy): https://packages.ubuntu.com/noble/amd64/acl/filelist
+# UBTU-22-654015 / V-260605 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=-1 -k perm_chng
+
+# UBTU-22-654220 / V-260646 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-w /etc/sudoers -p wa -k privilege_modification
+
+# UBTU-22-654225 / V-260647 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-w /etc/sudoers.d -p wa -k privilege_modification
+
+# UBTU-22-654185 / V-260639 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+-a always,exit -F arch=b64 -S unlinkat,renameat,renameat2 -F auid>=1000 -F auid!=-1 -k delete
+
+# v0.14: preserve source execve rules; include the separate execveat syscall for privilege transitions.
+# UBTU-22-654230 / V-260648 | V2R10 privilege objective; execveat is an enterprise extension, not literal STIG fix text
+-a always,exit -F arch=b64 -S execveat -C uid!=euid -F euid=0 -k t1_execveat_priv
+# UBTU-22-654230 / V-260648 | V2R10 privilege objective; execveat is an enterprise extension, not literal STIG fix text
+-a always,exit -F arch=b64 -S execveat -C gid!=egid -F egid=0 -k t1_execveat_priv
