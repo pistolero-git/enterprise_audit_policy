@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.3 | gcp/ubuntu2204
-# Enterprise Linux Audit v0.16.3  |  [gcp/ubuntu2204]
+# TARGET ARCHITECTURE: x86_64 | v0.16.4 | gcp/ubuntu2204
+# Enterprise Linux Audit v0.16.4  |  [gcp/ubuntu2204]
 # Tier: tier-1-baseline
 # Purpose: failure mode and loginuid integrity
 # Source/authority: Applicable STIG audit framework; linux-audit auditctl/audit.rules

@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.3 | on-prem/ubuntu2204
-# Tier 1 target: Ubuntu 22.04 LTS (V2R10 reconciliation candidate)
-# Engineering basis: Ubuntu 24.04 V1R7 audit objectives, not an exact source-rule extraction
+# TARGET ARCHITECTURE: x86_64 | v0.16.4 | on-prem/ubuntu2204
+# Tier 1 target: Ubuntu 22.04 LTS (49 V2R10 audit-rule V-IDs mapped; engineering candidate)
+# Source check: published Ubuntu 22.04 V2R10 check/fix text; original DISA archive hash not independently verified
 # IMPORTANT: this profile is NOT an approved product STIG implementation.
 # Vendor and STIG-specific path prerequisites must be met before deployment.
 # Enterprise Linux Audit v0.16 | on-prem/ubuntu2204
@@ -8,19 +8,19 @@
 # IMPORTANT: missing paths need remediation or approved N/A/exception; do not silently ignore errors.
 
 ## Functional area: authentication and session-privileged commands
-# UBTU-22-654100 / V-260622 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654100 / V-260622 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/bin/su -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-priv_change
 
-# UBTU-22-654035 / V-260609 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654035 / V-260609 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=-1 -k priv_cmd
 
-# UBTU-22-654070 / V-260616 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654070 / V-260616 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=-1 -k priv_cmd
 
-# UBTU-22-654040 / V-260610 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654040 / V-260610 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-crontab
 
-# UBTU-22-654075 / V-260617 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654075 / V-260617 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-pam_timestamp_check
 
 # IMAGE PREREQUISITE / STIG DIRECTIVE RETAINED: /var/log/sudo.log is
@@ -29,10 +29,10 @@
 # Without the file the following audit watch may fail to load. Do not
 # silently drop this inherited rule or treat syslog as equivalent.
 # Source: https://manpages.ubuntu.com/manpages/noble/man5/sudoers.5.html
-# UBTU-22-654235 / V-260649 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654235 / V-260649 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /var/log/sudo.log -p wa -k maintenance
 
-# UBTU-22-654030 / V-260608 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654030 / V-260608 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/usr/bin/chfn -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-chfn
 
 # Enterprise baseline — PAM configuration changes (not claimed as an applicable product STIG fix).

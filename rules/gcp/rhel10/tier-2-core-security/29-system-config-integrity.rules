@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.3 | gcp/rhel10
-# Enterprise Linux Audit Policy v0.16.3 | gcp/rhel10 | Tier 2 — PROPOSAL; inactive pending collection-volume decision
+# TARGET ARCHITECTURE: x86_64 | v0.16.4 | gcp/rhel10
+# Enterprise Linux Audit Policy v0.16.4 | gcp/rhel10 | Tier 2 — PROPOSAL; inactive pending collection-volume decision
 # Objective: persistent/system security config changes irrespective of CVE association.
 # /etc generally exists, but individual security configuration files may not.
 # The proposed directory rule would cover creation and modification under /etc,

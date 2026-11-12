@@ -1,4 +1,65 @@
-# 03 — Rule Sourcing and Maintenance | v0.16.3
+# 03 — Rule Sourcing and Maintenance | v0.16.4
+
+## v0.16.4 — Ubuntu 22.04 V2R10 audit-rule mapping (offline)
+
+**Scope:** The published Ubuntu 22.04 V2R10 checklist identifies **49 audit-rule-related requirements** (46 V-260604–V-260649, plus V-274862, V-288815, and V-288816). All 49 have at least one **active, V-ID-labelled implementing directive** in Tier 1 or Finalize in each of the eight Ubuntu 22.04 OS/cloud/architecture variants. `-e 2` stays in `finalize/99-finalize.rules`. x86_64 includes the required b32/b64 source patterns; ARM64 uses supported native b64 syscall equivalents rather than pretending x86 32-bit rules apply.
+
+**Evidence limits:** Mappings were cross-checked against the **published V2R10 check/fix text** at <https://stigaview.com/products/ubuntu2204/v2r10/onepage/> and the officially announced release at <https://www.cyber.mil/stigs/stig-announcements>. The original DISA V2R10 ZIP/XCCDF **was not available for independent hash verification in this review**, so this is a *published-source rule representation check*, **not** certified official archive equivalence, host loadability, STIG compliance, or event-generation evidence. The full Ubuntu 22.04 STIG has requirements beyond these 49 audit rule entries (e.g., auditd.conf and boot-time audit enablement).
+
+**Known implementation caveats:** The STIG's V-274862 check/fix prescribes cron directory watches; it does **not** by itself audit each command executed by cron, despite the requirement title. Several other watches depend on files or packages not guaranteed on generic images (`/var/log/sudo.log`, `/var/log/journal`, `/var/log/faillog`, `/etc/security/opasswd`, ACL/PAM/OpenSSH/cron utilities). They are represented in the rules but must not be assumed successfully deployed; resolve prerequisites or obtain an approved applicability/waiver decision. `-f 2` remains settled Tier 1 policy and is unchanged.
+
+| V2R10 requirement | Required audit behavior | Implementing file(s) | Notes |
+|---|---|---|---|
+| UBTU-22-654010 / V-260604 | AppArmor parser execution | `14-mac-policy.rules` | Path prerequisite: AppArmor package/binary must exist |
+| UBTU-22-654015 / V-260605 | chacl execution | `12-stig-privilege.rules` | Path prerequisite: acl package/binary must exist |
+| UBTU-22-654020 / V-260606 | chage execution | `10-stig-identity.rules` | — |
+| UBTU-22-654025 / V-260607 | chcon execution | `12-stig-privilege.rules` | — |
+| UBTU-22-654030 / V-260608 | chfn execution | `11-stig-authentication.rules` | — |
+| UBTU-22-654035 / V-260609 | chsh execution | `11-stig-authentication.rules` | — |
+| UBTU-22-654040 / V-260610 | crontab execution | `11-stig-authentication.rules` | Path prerequisite: cron package/binary must exist |
+| UBTU-22-654045 / V-260611 | fdisk execution | `13-stig-system.rules` | Path prerequisite: fdisk package/binary must exist |
+| UBTU-22-654050 / V-260612 | gpasswd execution | `10-stig-identity.rules` | — |
+| UBTU-22-654055 / V-260613 | kmod execution | `13-stig-system.rules` | Path prerequisite: kmod package and path must exist |
+| UBTU-22-654060 / V-260614 | modprobe execution | `13-stig-system.rules` | Path prerequisite: kmod package and path must exist |
+| UBTU-22-654065 / V-260615 | mount execution | `12-stig-privilege.rules` | — |
+| UBTU-22-654070 / V-260616 | newgrp execution | `11-stig-authentication.rules` | — |
+| UBTU-22-654075 / V-260617 | pam_timestamp_check execution | `11-stig-authentication.rules` | Path prerequisite: PAM helper may be absent on minimized images |
+| UBTU-22-654080 / V-260618 | passwd execution | `10-stig-identity.rules` | — |
+| UBTU-22-654085 / V-260619 | setfacl execution | `12-stig-privilege.rules` | — |
+| UBTU-22-654090 / V-260620 | ssh-agent execution | `12-stig-privilege.rules` | Path prerequisite: OpenSSH client package must exist |
+| UBTU-22-654095 / V-260621 | ssh-keysign execution | `12-stig-privilege.rules` | Path prerequisite: OpenSSH client helper may be absent |
+| UBTU-22-654100 / V-260622 | su execution | `11-stig-authentication.rules` | — |
+| UBTU-22-654105 / V-260623 | sudo execution | `12-stig-privilege.rules` | — |
+| UBTU-22-654110 / V-260624 | sudoedit execution | `12-stig-privilege.rules` | — |
+| UBTU-22-654115 / V-260625 | umount execution | `12-stig-privilege.rules` | — |
+| UBTU-22-654120 / V-260626 | unix_update execution | `10-stig-identity.rules` | Path prerequisite: Check /sbin versus /usr/sbin usr-merge resolution |
+| UBTU-22-654125 / V-260627 | usermod execution | `10-stig-identity.rules` | — |
+| UBTU-22-654130 / V-260628 | /etc/group changes | `10-stig-identity.rules` | — |
+| UBTU-22-654135 / V-260629 | /etc/gshadow changes | `10-stig-identity.rules` | — |
+| UBTU-22-654140 / V-260630 | /etc/security/opasswd changes | `10-stig-identity.rules` | Path prerequisite: History file may not be initialized until PAM history is enabled |
+| UBTU-22-654145 / V-260631 | /etc/passwd changes | `10-stig-identity.rules` | — |
+| UBTU-22-654150 / V-260632 | /etc/shadow changes | `10-stig-identity.rules` | — |
+| UBTU-22-654155 / V-260633 | chmod/fchmod/fchmodat syscalls | `12-stig-privilege.rules` | — |
+| UBTU-22-654160 / V-260634 | chown/fchown/fchownat/lchown syscalls | `12-stig-privilege.rules` | — |
+| UBTU-22-654165 / V-260635 | denied creat/open/openat/handle/truncate syscalls | `12-stig-privilege.rules` | — |
+| UBTU-22-654170 / V-260636 | delete_module syscall | `13-stig-system.rules` | — |
+| UBTU-22-654175 / V-260637 | init_module/finit_module syscalls | `13-stig-system.rules` | — |
+| UBTU-22-654180 / V-260638 | extended-attribute syscalls | `12-stig-privilege.rules` | — |
+| UBTU-22-654185 / V-260639 | unlink/rename/rmdir syscalls | `12-stig-privilege.rules` | — |
+| UBTU-22-654190 / V-260640 | /var/log/journal changes | `13-stig-system.rules` | Path prerequisite: Persistent journald path may not exist by default |
+| UBTU-22-654195 / V-260641 | /var/log/btmp changes | `10-stig-identity.rules` | — |
+| UBTU-22-654200 / V-260642 | /var/log/wtmp changes | `10-stig-identity.rules` | — |
+| UBTU-22-654205 / V-260643 | /var/run/utmp changes | `10-stig-identity.rules` | Path prerequisite: /var/run/utmp may resolve through /run; check image |
+| UBTU-22-654210 / V-260644 | /var/log/faillog changes | `10-stig-identity.rules` | Path prerequisite: Legacy faillog file may not exist |
+| UBTU-22-654215 / V-260645 | /var/log/lastlog changes | `10-stig-identity.rules` | — |
+| UBTU-22-654220 / V-260646 | /etc/sudoers changes | `12-stig-privilege.rules` | — |
+| UBTU-22-654225 / V-260647 | /etc/sudoers.d changes | `12-stig-privilege.rules` | — |
+| UBTU-22-654230 / V-260648 | execve privilege-transition auditing | `12-stig-privilege.rules` | — |
+| UBTU-22-654235 / V-260649 | /var/log/sudo.log changes | `11-stig-authentication.rules` | Path prerequisite: sudo file logging is not default; configure/create before watch |
+| UBTU-22-654041 / V-274862 | cron configuration/spool watches (STIG literal check/fix) | `13-stig-system.rules` | STIG title mentions script execution, but prescribed watches track changes to cron directories, not executions |
+| UBTU-22-654126 / V-288815 | useradd execution | `10-stig-identity.rules` | — |
+| UBTU-22-654240 / V-288816 | audit policy immutability -e 2 | `99-finalize.rules` | Finalize only; do not merge into Tier 1 before other rules |
+
 
 ## Purpose and release rule
 
@@ -132,7 +193,7 @@ For reproducibility, record the date/build ID (manifests are `current` and can c
 
 ## v0.14 — Source and traceability: Ubuntu and Debian gaps
 
-**N1 (Ubuntu 22.04 V2R10):** The former sparse profile was replaced with a broader Tier 1 candidate reflecting the Ubuntu 24.04 audit objectives but with Ubuntu 22.04 specific AppArmor parser activation (`/sbin/apparmor_parser`, V-260604). V2R10 immutability (V-288816) remains in Finalize. Obtain and preserve the original official V2R10 archive SHA256 (review references `2229b5be…` but that archive was not included in this task), extract the full audit rule-bearing V-IDs, compare all check/fix requirements, and document remaining differences. **Do not state full 49/49 verified STIG coverage.**
+**N1 (Ubuntu 22.04 V2R10; historical v0.14 assessment, superseded by the v0.16.4 published-source mapping above):** The former sparse profile was replaced with a broader Tier 1 candidate reflecting the Ubuntu 24.04 audit objectives but with Ubuntu 22.04 specific AppArmor parser activation (`/sbin/apparmor_parser`, V-260604). V2R10 immutability (V-288816) remains in Finalize. Obtain and preserve the original official V2R10 archive SHA256 (review references `2229b5be…` but that archive was not included in this task), extract the full audit rule-bearing V-IDs, compare all check/fix requirements, and document remaining differences. **Do not state full 49/49 verified STIG coverage.**
 
 **N2 (Ubuntu 26.04):** The Tier 1 directives now match the Ubuntu 24.04 *engineering objectives* except for release-specific AppArmor handling and documented prerequisite assumptions. They must **not** be labeled an Ubuntu 26.04 DISA STIG baseline. Assess the exact current vendor package/image manifests and do not silently ignore missing watches.
 

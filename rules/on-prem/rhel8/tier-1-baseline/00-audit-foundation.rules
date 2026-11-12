@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.3 | on-prem/rhel8
-# Enterprise Linux Audit v0.16.3  |  [on-prem/rhel8]
+# TARGET ARCHITECTURE: x86_64 | v0.16.4 | on-prem/rhel8
+# Enterprise Linux Audit v0.16.4  |  [on-prem/rhel8]
 # Tier: tier-1-baseline
 # Purpose: initialize managed policy
 # Source/authority: linux-audit/audit-userspace rules/10-base-config.rules; enterprise policy

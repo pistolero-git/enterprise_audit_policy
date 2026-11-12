@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.3 | on-prem/rhel9
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.4 | on-prem/rhel9
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.3  |  [on-prem/rhel9]
+# Enterprise Linux Audit v0.16.4  |  [on-prem/rhel9]
 # Tier: tier-2-core-security
 # Purpose: security administration process activity
 # Source/authority: Enterprise SOC/IR minimum

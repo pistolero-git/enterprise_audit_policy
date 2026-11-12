@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.3 | azure/sles15
-# Enterprise Linux Audit v0.16.3  |  [azure/sles15]
+# TARGET ARCHITECTURE: x86_64 | v0.16.4 | azure/sles15
+# Enterprise Linux Audit v0.16.4  |  [azure/sles15]
 # Tier: tier-2-core-security
 # Purpose: interactive process execution and forensic process context
 # Source/authority: Enterprise SOC/IR minimum (former Tier 3)

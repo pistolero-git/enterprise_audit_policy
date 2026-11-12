@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.3 | aws/ubuntu2204
-# Tier 1 target: Ubuntu 22.04 LTS (V2R10 reconciliation candidate)
-# Engineering basis: Ubuntu 24.04 V1R7 audit objectives, not an exact source-rule extraction
+# TARGET ARCHITECTURE: x86_64 | v0.16.4 | aws/ubuntu2204
+# Tier 1 target: Ubuntu 22.04 LTS (49 V2R10 audit-rule V-IDs mapped; engineering candidate)
+# Source check: published Ubuntu 22.04 V2R10 check/fix text; original DISA archive hash not independently verified
 # IMPORTANT: this profile is NOT an approved product STIG implementation.
 # Vendor and STIG-specific path prerequisites must be met before deployment.
 # Enterprise Linux Audit v0.16 | aws/ubuntu2204
@@ -8,31 +8,31 @@
 # IMPORTANT: missing paths need remediation or approved N/A/exception; do not silently ignore errors.
 
 ## Functional area: kernel modules, partitioning, cron execution, systemd journal
-# UBTU-22-654175 / V-260637 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654175 / V-260637 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F arch=b32 -S init_module,finit_module -F auid>=1000 -F auid!=-1 -k module_chng
-# UBTU-22-654175 / V-260637 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654175 / V-260637 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F arch=b64 -S init_module,finit_module -F auid>=1000 -F auid!=-1 -k module_chng
 
-# UBTU-22-654170 / V-260636 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654170 / V-260636 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F arch=b32 -S delete_module -F auid>=1000 -F auid!=-1 -k module_chng
-# UBTU-22-654170 / V-260636 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654170 / V-260636 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F arch=b64 -S delete_module -F auid>=1000 -F auid!=-1 -k module_chng
 
-# UBTU-22-654060 / V-260614 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654060 / V-260614 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /sbin/modprobe -p x -k modules
 
-# UBTU-22-654055 / V-260613 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654055 / V-260613 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /bin/kmod -p x -k modules
 
-# UBTU-22-654045 / V-260611 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654045 / V-260611 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /usr/sbin/fdisk -p x -k fdisk
 
-# UBTU-22-654041 / V-274862 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654041 / V-274862 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /etc/cron.d/ -p wa -k cronjobs
-# UBTU-22-654041 / V-274862 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654041 / V-274862 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /var/spool/cron/ -p wa -k cronjobs
 
-# UBTU-22-654190 / V-260640 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654190 / V-260640 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /var/log/journal -p wa -k systemd_journal
 
 # Enterprise baseline — interactive-user system time adjustments.

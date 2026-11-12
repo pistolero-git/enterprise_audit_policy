@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.3 | on-prem/debian12
-# Enterprise Linux Audit Policy v0.16.3 | on-prem/debian12/aarch64 | Tier 2 — PROPOSAL; inactive pending collection-volume decision
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.4 | on-prem/debian12
+# Enterprise Linux Audit Policy v0.16.4 | on-prem/debian12/aarch64 | Tier 2 — PROPOSAL; inactive pending collection-volume decision
 # Objective: persistent/system security config changes irrespective of CVE association.
 # /etc generally exists, but individual security configuration files may not.
 # The proposed directory rule would cover creation and modification under /etc,

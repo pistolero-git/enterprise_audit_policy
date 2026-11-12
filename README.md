@@ -1,15 +1,22 @@
-# Enterprise Linux Audit Policy — v0.16.3
+# Enterprise Linux Audit Policy — v0.16.4
 
 **Status: ENGINEERING CANDIDATE — no profile is certified STIG-compliant or production-approved by this release.**
 
 v0.15 retains the v0.14 remediation of several *static* defects identified in the independent v0.11 validation report. **It does not close the remaining platform STIG-reconciliation, file-existence, agent-installation, on-host event-generation, performance, or SIEM-validation gates.**
 
 
+## v0.16.4 — Ubuntu 22.04 published-source reconciliation (no active rule change)
+
+- Reconciled **49 V2R10 audit-rule V-IDs** with active Tier 1/Finalize rule coverage in all eight Ubuntu 22.04 implementations; full crosswalk is in `docs/03-RULE-SOURCING-AND-MAINTENANCE.md`.
+- Corrected Ubuntu 22.04 source-provenance wording and documented conditional paths and the cron-watch limitation.
+- The official V2R10 ZIP/XCCDF was not independently obtained or hash-verified. This is **not** a compliance certification or host-test result.
+- **All 2,000 rule files retain exactly the same active directives as v0.16.3.** Tier 2 configuration-integrity candidates remain disabled; Tier 3 CVE selections and `-f 2` are unchanged.
+
 ## v0.16.3 — inactive Tier 2 proposal clarification (no audit behavior changes)
 
 - **Resolved recurring false positive:** every `29-system-config-integrity.rules` file contains exactly **one** textual `/etc/ld.so.preload` occurrence, on one **commented-out** (inactive) leaf-path audit rule. The other comments describe applicability without repeating the path. Previously the same path appeared four times in comments but represented only one candidate, not duplicate rules.
 - The broad `/etc` integrity proposal and the loader leaf-path alternative both remain **inactive**, pending a separate Tier 2 promotion/collection-volume decision. No Tier 2 collection was added.
-- Standardized release metadata and the three existing guide titles to `v0.16.3`. All **2,000 active rule directive sequences match v0.16.2 exactly**; the settled `-f 2` and `-e 2` controls, tiers, and all 80 architecture variants are unchanged.
+- Standardized release metadata and the three existing guide titles to `v0.16.4`. All **2,000 active rule directive sequences match v0.16.2 exactly**; the settled `-f 2` and `-e 2` controls, tiers, and all 80 architecture variants are unchanged.
 - Reviewers must count **actual rule directives**, not plain-text occurrences within explanatory comments, when reporting duplicates. The AI handoff `AGENTS.md` records this as a resolved issue.
 
 ## v0.16.2 — header-format normalization (no active directive changes)
@@ -120,7 +127,7 @@ finalize/               99-finalize.rules (-e 2; last)
 
 ## Security and operational gates — not resolved by static tests
 
-- **STIG completeness:** Ubuntu 24.04 has review-derived x86_64 source-line reconciliation; Ubuntu 22.04 has an expanded but not source-line-certified V2R10 candidate; RHEL 9 has a prior local reference (81/81). Other OS versions require current product-specific DISA STIG/SRG checks, file/path applicability, and V-ID-level evidence. **No profile can be represented as fully STIG-validated.**
+- **STIG completeness:** Ubuntu 24.04 has review-derived x86_64 source-line reconciliation; Ubuntu 22.04 has 49/49 V2R10 audit-rule V-IDs mapped against publicly readable check/fix text, but not independently hash-verified against the official DISA archive or host-tested; RHEL 9 has a prior local reference (81/81). Other OS versions require current product-specific DISA STIG/SRG checks, file/path applicability, and V-ID-level evidence. **No profile can be represented as fully STIG-validated.**
 - **Missing paths:** `auditctl`/`augenrules` can reject `-w`, `path=`, and `dir=` watches if referenced files/directories are absent. The Ubuntu and RHEL 9 source-based candidates in particular contain required-path watches that may be absent on minimal images. Validate and resolve through prerequisite installation, approved N/A, or exception **before loading**.
 - **Cloud guest agents:** Mandatory provider-specific agent/credential/CLI monitoring is conditional on what is installed. The generic root daemon rules are **not** equivalent to exact agent configuration watches. An applicable but inactive agent watch needs remediation or an approved exception.
 - **Cloud control plane:** CloudTrail (AWS), Azure Activity Log (Azure), and Cloud Audit Logs (GCP) are mandatory companion sources for security-group/NSG/firewall, role/IAM, and API changes. `auditd` cannot record remote management-plane operations directly.

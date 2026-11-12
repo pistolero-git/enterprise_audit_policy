@@ -1,4 +1,8 @@
-# 01 — Implementation Guide | v0.16.3
+# 01 — Implementation Guide | v0.16.4
+
+## v0.16.4 — Ubuntu 22.04 STIG coverage boundary
+
+**Ubuntu 22.04 V2R10 (v0.16.4 offline mapping):** All **49 published audit-rule-related V-IDs** are represented by active Tier 1/Finalize directives in all eight Ubuntu 22.04 variants, including the AppArmor parser, cron watches, useradd and immutability. This is a source-to-rule presence/intent cross-check, **not** official DISA ZIP hash verification, host-load evidence, or overall STIG compliance. Mandatory watches with missing-file/package prerequisites still require remediation or an approved exception. See the full 49-row traceability table in Document 03.
 
 ## Scope and deployment decision
 
@@ -157,7 +161,7 @@ Record OS release, architecture, provider/account/project, image ID/kernel/audit
 
 ## v0.14 — Deployment and applicability: Ubuntu and Debian gaps
 
-**N1 (Ubuntu 22.04 V2R10):** The former sparse profile was replaced with a broader Tier 1 candidate reflecting the Ubuntu 24.04 audit objectives but with Ubuntu 22.04 specific AppArmor parser activation (`/sbin/apparmor_parser`, V-260604). V2R10 immutability (V-288816) remains in Finalize. Obtain and preserve the original official V2R10 archive SHA256 (review references `2229b5be…` but that archive was not included in this task), extract the full audit rule-bearing V-IDs, compare all check/fix requirements, and document remaining differences. **Do not state full 49/49 verified STIG coverage.**
+**N1 (Ubuntu 22.04 V2R10; historical v0.14 assessment, superseded by the v0.16.4 published-source mapping above):** The former sparse profile was replaced with a broader Tier 1 candidate reflecting the Ubuntu 24.04 audit objectives but with Ubuntu 22.04 specific AppArmor parser activation (`/sbin/apparmor_parser`, V-260604). V2R10 immutability (V-288816) remains in Finalize. Obtain and preserve the original official V2R10 archive SHA256 (review references `2229b5be…` but that archive was not included in this task), extract the full audit rule-bearing V-IDs, compare all check/fix requirements, and document remaining differences. **Do not state full 49/49 verified STIG coverage.**
 
 **N2 (Ubuntu 26.04):** The Tier 1 directives now match the Ubuntu 24.04 *engineering objectives* except for release-specific AppArmor handling and documented prerequisite assumptions. They must **not** be labeled an Ubuntu 26.04 DISA STIG baseline. Assess the exact current vendor package/image manifests and do not silently ignore missing watches.
 

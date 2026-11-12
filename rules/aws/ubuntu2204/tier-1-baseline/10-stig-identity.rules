@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.3 | aws/ubuntu2204
-# Tier 1 target: Ubuntu 22.04 LTS (V2R10 reconciliation candidate)
-# Engineering basis: Ubuntu 24.04 V1R7 audit objectives, not an exact source-rule extraction
+# TARGET ARCHITECTURE: x86_64 | v0.16.4 | aws/ubuntu2204
+# Tier 1 target: Ubuntu 22.04 LTS (49 V2R10 audit-rule V-IDs mapped; engineering candidate)
+# Source check: published Ubuntu 22.04 V2R10 check/fix text; original DISA archive hash not independently verified
 # IMPORTANT: this profile is NOT an approved product STIG implementation.
 # Vendor and STIG-specific path prerequisites must be met before deployment.
 # Enterprise Linux Audit v0.16 | aws/ubuntu2204
@@ -8,60 +8,60 @@
 # IMPORTANT: missing paths need remediation or approved N/A/exception; do not silently ignore errors.
 
 ## Functional area: identity, account administration, login records
-# UBTU-22-654145 / V-260631 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654145 / V-260631 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /etc/passwd -p wa -k usergroup_modification
 
-# UBTU-22-654130 / V-260628 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654130 / V-260628 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /etc/group -p wa -k usergroup_modification
 
-# UBTU-22-654150 / V-260632 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654150 / V-260632 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /etc/shadow -p wa -k usergroup_modification
 
-# UBTU-22-654135 / V-260629 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654135 / V-260629 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /etc/gshadow -p wa -k usergroup_modification
 
 # PREREQUISITE: /etc/security/opasswd is created/used only with configured
 # password-history mechanisms; never assume it exists on cloud images.
-# UBTU-22-654140 / V-260630 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654140 / V-260630 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /etc/security/opasswd -p wa -k usergroup_modification
 
-# UBTU-22-654200 / V-260642 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654200 / V-260642 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /var/log/wtmp -p wa -k logins
 
-# UBTU-22-654205 / V-260643 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654205 / V-260643 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /var/run/utmp -p wa -k logins
 
-# UBTU-22-654195 / V-260641 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654195 / V-260641 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /var/log/btmp -p wa -k logins
 
-# UBTU-22-654215 / V-260645 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654215 / V-260645 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /var/log/lastlog -p wa -k logins
 
 # PREREQUISITE: /var/log/faillog is legacy/runtime-image dependent;
 # assess STIG remediation or approved applicability if absent.
-# UBTU-22-654210 / V-260644 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654210 / V-260644 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -w /var/log/faillog -p wa -k logins
 
-# UBTU-22-654126 / V-288815 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654126 / V-288815 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/usr/sbin/useradd -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-useradd
 
-# UBTU-22-654125 / V-260627 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654125 / V-260627 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-usermod
 
-# UBTU-22-654020 / V-260606 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654020 / V-260606 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-chage
 
-# UBTU-22-654050 / V-260612 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654050 / V-260612 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-gpasswd
 
-# UBTU-22-654080 / V-260618 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654080 / V-260618 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-passwd
 
 # PACKAGE PATH: Ubuntu 22.04 candidate libpam-modules-bin lists /usr/sbin/unix_update.
 # This STIG extraction says /sbin/unix_update; check usr-merge alias resolves
 # to the packaged binary, rather than assuming it does on every image.
 # Source: https://packages.ubuntu.com/noble-updates/amd64/libpam-modules-bin/filelist
-# UBTU-22-654120 / V-260626 | V2R10 source objective; full check/fix and path prerequisites require independent reconciliation
+# UBTU-22-654120 / V-260626 | V2R10 published check/fix mapping; path/package prerequisites still require image validation
 -a always,exit -F path=/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=-1 -k privileged-unix-update
 
 # v0.14: additional identity/authentication configuration monitoring (enterprise baseline)

@@ -2,9 +2,14 @@
 
 > **Purpose:** Portable handoff instructions for AI coding/review agents working on this Linux `auditd` policy project. Read this file, the current package `README.md`, and all three `docs/` guides before changing rules. Treat statements here as project decisions, **not** proof that an individual host or STIG requirement is compliant.
 >
-> **As of:** 2026-11-11  
-> **Current release:** `enterprise-audit-policy-v0.16.3.zip`  
+> **As of:** 2026-11-12  
+> **Current release:** `enterprise-audit-policy-v0.16.4.zip`  
 > **Release state:** **ENGINEERING CANDIDATE**. No OS/cloud/architecture profile is certified STIG-compliant, tested on a representative host, or production-approved.
+
+## Ubuntu 22.04 V2R10 reconciliation status (v0.16.4)
+
+All 49 published audit-rule-related V-IDs are mapped to active directives in the eight Ubuntu 22.04 implementations. The exact 49-row table is in `docs/03-RULE-SOURCING-AND-MAINTENANCE.md`. This **closes the missing audit-rule-ID inventory gap**, but **does not** close official DISA ZIP/XCCDF hash verification, conditional image path/package prerequisites, kernel loading, or actual STIG compliance. Do not reopen the "missing 49 audit-rule IDs" issue without naming a specific V-ID and demonstrating a missing or semantically invalid *active* directive. Continue reporting legitimate unverified deployment and official-source checks. Tier 2 `29-system-config-integrity.rules` remains a disabled proposal; do not promote it without an explicit security/performance decision.
+
 
 ## 1. Project objective and boundaries
 
@@ -22,10 +27,10 @@ Produce a comprehensive, maintainable enterprise **Linux Audit Policy** for on-p
 
 ## 2. Source of truth, layout, and inventory
 
-Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.16.3 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
+Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.16.4 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
 
 ```text
-enterprise-audit-policy-v0.16.3/
+enterprise-audit-policy-v0.16.4/
 ├── README.md
 ├── docs/
 │   ├── 01-IMPLEMENTATION-GUIDE.md
@@ -132,7 +137,7 @@ The general `30-exploitation.rules` remains Tier 3 and **is not renamed after a 
 
 ## 6. OS, architecture and cloud specifics
 
-- **Ubuntu 22.04:** Tier 1 expanded; `apparmor_parser` `/sbin` candidate and V2R10 mapping; full official 22.04 V2R10 49/49 reconciliation **not confirmed**. V-ID corrections include `useradd` V-288815, cron V-274862, finalizer V-288816. Do not claim STIG certification.
+- **Ubuntu 22.04:** Tier 1 expanded; `apparmor_parser` `/sbin` candidate and V2R10 mapping; 49/49 published rule-bearing V-IDs mapped in v0.16.4; independent official archive hash verification and host/load validation **not completed**. V-ID corrections include `useradd` V-288815, cron V-274862, finalizer V-288816. Do not claim STIG certification.
 - **Ubuntu 24.04:** user-supplied V1R7 extraction: **64 source directives represented** on x86_64; does not prove live loading, exact independent current-STIG compliance or ARM64 equivalence. Some watch paths require prerequisites, notably `/var/log/sudo.log`; `/sbin/unix_update` may require checking `/usr`-merge alias.
 - **Ubuntu 26.04:** inherits Ubuntu 24.04 **engineering objectives**, not 24.04 STIG authority; uses `/usr/sbin/apparmor_parser`. Check released package/image paths and new STIG applicability separately.
 - **RHEL 9:** older local V2R10 reference included **81 directives**, not an independent comparison with the currently authoritative DISA publication.
@@ -189,7 +194,7 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 - Previous review reports and CSV matrices may be provided as supporting evidence, but the most recent **verified ZIP** is canonical for actual active rules.
 - Validate created artifacts exist before giving download paths. Prefer small, transparent diffs and a concise validation summary. If you cannot prove something without a host, label it **offline candidate / requires host validation**, not approved.
 
-## 9B. v0.16.3 resolved recurring loader-path review comment
+## 9B. v0.16.4 resolved recurring loader-path review comment
 
 - In the 80 copies of `29-system-config-integrity.rules`, consolidate the prose references so `/etc/ld.so.preload` appears on **one commented candidate line** only.
 - **Zero active rules were added, removed or changed** compared with v0.16.2; the candidate remains inactive. Do not file this as an unresolved duplicate based on raw text matches.
@@ -210,4 +215,4 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 4. **Continue offline product STIG/path completeness:** authoritative Ubuntu 22.04 V2R10, RHEL, AlmaLinux, Oracle Linux, SUSE, Amazon Linux and other supported OS profiles; package/image defaults and conditional guest agents. Do not falsely claim parity/compliance.
 5. **Maintain release provenance:** keep architecture/release headers, README and all three guide titles synchronized for every subsequent version. v0.16.1 fixed the previously reported housekeeping issues without changing active directives.
 
-**If another AI receives only this file:** ask for the latest package ZIP (currently v0.16.3) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.
+**If another AI receives only this file:** ask for the latest package ZIP (currently v0.16.4) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.

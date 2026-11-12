@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.3 | aws/amazon-linux-2027
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.4 | aws/amazon-linux-2027
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.3  |  [aws/amazon-linux-2027]
+# Enterprise Linux Audit v0.16.4  |  [aws/amazon-linux-2027]
 # Tier: tier-1-baseline
 # Purpose: failure mode and loginuid integrity
 # Source/authority: Applicable STIG audit framework; linux-audit auditctl/audit.rules
