@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.4 | aws/ubuntu2404
+# TARGET ARCHITECTURE: x86_64 | v0.17 | aws/ubuntu2404
 # Enterprise Linux Audit v0.16 | aws/ubuntu2404
 # Tier 1 — Ubuntu 24.04 audit-rule candidate
 # Source: Canonical Ubuntu 24.04 LTS DISA STIG V1R7, manual XCCDF fix text

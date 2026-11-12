@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.4 | gcp/ubuntu2404
-# Enterprise Linux Audit v0.16.4  |  [gcp/ubuntu2404]
+# TARGET ARCHITECTURE: x86_64 | v0.17 | gcp/ubuntu2404
+# Enterprise Linux Audit v0.17  |  [gcp/ubuntu2404]
 # Tier: tier-2-core-security
 # Purpose: package repository tampering
 # Source/authority: Enterprise SOC/IR minimum; distro package manager vendor documentation

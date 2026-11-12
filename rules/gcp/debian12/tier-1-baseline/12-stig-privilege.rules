@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.4 | gcp/debian12
-# Enterprise Linux Audit v0.16.4  |  [gcp/debian12]
+# TARGET ARCHITECTURE: x86_64 | v0.17 | gcp/debian12
+# Enterprise Linux Audit v0.17  |  [gcp/debian12]
 # Tier: tier-1-baseline
 # Purpose: privilege transitions and sudo policy changes
 # Source/authority: DISA applicable product STIG/SRG objective; linux-audit sample rules

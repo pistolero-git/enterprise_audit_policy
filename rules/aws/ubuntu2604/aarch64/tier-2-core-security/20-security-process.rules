@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.4 | aws/ubuntu2604
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.17 | aws/ubuntu2604
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.4  |  [aws/ubuntu2604]
+# Enterprise Linux Audit v0.17  |  [aws/ubuntu2604]
 # Tier: tier-2-core-security
 # Purpose: security administration process activity
 # Source/authority: Enterprise SOC/IR minimum

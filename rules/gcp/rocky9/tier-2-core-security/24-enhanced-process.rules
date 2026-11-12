@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.4 | gcp/rocky9
-# Enterprise Linux Audit v0.16.4  |  [gcp/rocky9]
+# TARGET ARCHITECTURE: x86_64 | v0.17 | gcp/rocky9
+# Enterprise Linux Audit v0.17  |  [gcp/rocky9]
 # Tier: tier-2-core-security
 # Purpose: interactive process execution and forensic process context
 # Source/authority: Enterprise SOC/IR minimum (former Tier 3)

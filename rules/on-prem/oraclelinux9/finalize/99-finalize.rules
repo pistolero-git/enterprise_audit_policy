@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.4 | on-prem/oraclelinux9
-# Enterprise Linux Audit v0.16.4  |  [on-prem/oraclelinux9]
+# TARGET ARCHITECTURE: x86_64 | v0.17 | on-prem/oraclelinux9
+# Enterprise Linux Audit v0.17  |  [on-prem/oraclelinux9]
 # Tier: finalize
 # Purpose: lock audit policy AFTER all selected rules are validated
 # Source/authority: DISA applicable STIG if required; Linux Audit upstream finalization

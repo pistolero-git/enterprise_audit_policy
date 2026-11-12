@@ -1,5 +1,9 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.4 | aws/almalinux9
-# Enterprise Linux Audit Policy v0.16.4 | aws/almalinux9 | Tier 2 — PROPOSAL; inactive pending collection-volume decision
+# TARGET ARCHITECTURE: x86_64 | v0.17 | aws/almalinux9
+# Enterprise Linux Audit Policy v0.17 | aws/almalinux9 | Tier 2 — targeted shell-startup watches active; broad /etc proposal remains inactive
+# Source: enterprise SOC/IR; Unix shell vendor documentation and audited installed path prerequisites.
+# These watch system-level startup file changes (writes and attributes only), not user home dotfiles or reads.
+# /etc/profile and the distro Bash startup file are standard installed-package paths, but must resolve on the selected image.
+# Do not claim auditd file-path watches detect creation of previously absent single files.
 # Objective: persistent/system security config changes irrespective of CVE association.
 # /etc generally exists, but individual security configuration files may not.
 # The proposed directory rule would cover creation and modification under /etc,
@@ -8,6 +12,17 @@
 # duplicate/overlap review and volume justification for busy and cloud hosts.
 # Audits writes/attribute changes, NOT file reads; covers both ABI variants.
 # # -a always,exit -F dir=/etc -F perm=wa -k t2_etc_integrity
+
+
+# v0.17 ACTIVE: CVE-independent system-wide shell startup integrity.
+-a always,exit -F arch=b64 -F path=/etc/profile -F perm=wa -k t2_shell_init
+-a always,exit -F arch=b32 -F path=/etc/profile -F perm=wa -k t2_shell_init
+-a always,exit -F arch=b64 -F path=/etc/bashrc -F perm=wa -k t2_shell_init
+-a always,exit -F arch=b32 -F path=/etc/bashrc -F perm=wa -k t2_shell_init
+-a always,exit -F arch=b64 -F dir=/etc/profile.d -F perm=wa -k t2_shell_init
+-a always,exit -F arch=b32 -F dir=/etc/profile.d -F perm=wa -k t2_shell_init
+# These rule keys are distinct from STIG watches; do not duplicate existing profile rules in other files.
+# /etc/profile.d is a documented default family directory; customized/minimal images still need a path preflight.
 
 # CVE-independent Magic SysRq control; conditional to kernel/sysctl support.
 # /etc/sysctl.conf and /etc/sysctl.d changes are covered by the active /etc rule.

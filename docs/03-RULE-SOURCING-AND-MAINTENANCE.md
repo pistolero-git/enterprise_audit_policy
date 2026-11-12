@@ -1,4 +1,13 @@
-# 03 — Rule Sourcing and Maintenance | v0.16.4
+# 03 — Rule Sourcing and Maintenance | v0.17
+
+## v0.17 — Targeted Tier 2 shell startup coverage decision
+
+**Decision and scope:** Audit system-wide shell initialization modifications independently of any CVE by adding active `wa` watches under `tier-2-core-security/29-system-config-integrity.rules`. Target `/etc/profile` for all profiles; `/etc/bashrc` on RHEL-like/Amazon and `/etc/bash.bashrc` on Ubuntu/Debian/SLES; `/etc/profile.d` on non-Debian profiles. Debian gets commented conditional `profile.d` watch only. x86_64: separate b32/b64; ARM64: b64 only. The new rule key is `t2_shell_init`.
+
+**Supporting references:** Red Hat's shell profile description <https://access.redhat.com/solutions/452073>; SUSE system administration guide <https://documentation.suse.com/sles/15-SP5/single-html/SLES-administration/>; Ubuntu `bash` file manifest <https://packages.ubuntu.com/noble/arm64/bash/filelist> and `base-files` manifest <https://packages.ubuntu.com/noble/amd64/base-files/filelist>; Debian `bash` file manifest <https://packages.debian.org/bookworm/amd64/bash/filelist> and historical explicit `profile.d` default-path caveat <https://sources.debian.org/src/base-files/4/debian/FAQ>; Linux Audit filesystem-watch semantics <https://man7.org/linux/man-pages/man8/auditctl.8.html>. These sources establish common configuration conventions and package paths; they do **not** verify every target image.
+
+**Not closed:** The inactive `/etc` recursive proposal would collect a wider set of configuration writes and is **not** approved. The inactive leaf `/etc/ld.so.preload` watch requires the file to exist and does not independently capture its initial creation. SSH/sudoers active coverage differs across profiles and remains contingent on installed packages. The SysRq and per-user shell startup rules are outside this scope. Track these as separate gaps or conditional controls, not as completed coverage.
+
 
 ## v0.16.4 — Ubuntu 22.04 V2R10 audit-rule mapping (offline)
 

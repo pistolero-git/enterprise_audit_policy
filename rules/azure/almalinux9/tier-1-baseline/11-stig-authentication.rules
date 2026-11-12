@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.4 | azure/almalinux9
-# Enterprise Linux Audit v0.16.4  |  [azure/almalinux9]
+# TARGET ARCHITECTURE: x86_64 | v0.17 | azure/almalinux9
+# Enterprise Linux Audit v0.17  |  [azure/almalinux9]
 # Tier: tier-1-baseline
 # Purpose: PAM/security authentication configuration
 # Source/authority: DISA applicable product STIG/SRG objective; enterprise authentication coverage

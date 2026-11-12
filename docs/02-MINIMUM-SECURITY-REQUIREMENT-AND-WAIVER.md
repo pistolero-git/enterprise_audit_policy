@@ -1,4 +1,11 @@
-# 02 — Minimum Security Requirement and Waiver | v0.16.4
+# 02 — Minimum Security Requirement and Waiver | v0.17
+
+## v0.17 — CVE-independent Tier 2 shell-startup baseline
+
+Active system-wide shell startup watches in `29-system-config-integrity.rules` are now part of mandatory **Tier 2**: `/etc/profile`, distribution-specific global Bash startup file and `/etc/profile.d` where it is a supported default. On Debian, `/etc/profile.d` is conditional because it is not guaranteed as a standard default and is not always sourced. **A nominal file presence does not prove a rule loaded.** Missing applicable paths must be provisioned or handled through the existing authorized applicability/waiver process.
+
+No `/etc`-wide integrity watch or `/etc/ld.so.preload` leaf watch was made active. Therefore this change **does not close initial creation monitoring for absent loader configuration**, which needs a separately justified broad watch or other file-creation telemetry. No CVE-specific Tier 3 rule is promoted to Tier 2. Audit failure `-f 2` remains settled Tier 1 policy.
+
 
 ## v0.16.4 — Ubuntu 22.04 STIG coverage boundary
 

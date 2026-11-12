@@ -3,13 +3,21 @@
 > **Purpose:** Portable handoff instructions for AI coding/review agents working on this Linux `auditd` policy project. Read this file, the current package `README.md`, and all three `docs/` guides before changing rules. Treat statements here as project decisions, **not** proof that an individual host or STIG requirement is compliant.
 >
 > **As of:** 2026-11-12  
-> **Current release:** `enterprise-audit-policy-v0.16.4.zip`  
+> **Current release:** `enterprise-audit-policy-v0.17.zip`  
 > **Release state:** **ENGINEERING CANDIDATE**. No OS/cloud/architecture profile is certified STIG-compliant, tested on a representative host, or production-approved.
 
 ## Ubuntu 22.04 V2R10 reconciliation status (v0.16.4)
 
-All 49 published audit-rule-related V-IDs are mapped to active directives in the eight Ubuntu 22.04 implementations. The exact 49-row table is in `docs/03-RULE-SOURCING-AND-MAINTENANCE.md`. This **closes the missing audit-rule-ID inventory gap**, but **does not** close official DISA ZIP/XCCDF hash verification, conditional image path/package prerequisites, kernel loading, or actual STIG compliance. Do not reopen the "missing 49 audit-rule IDs" issue without naming a specific V-ID and demonstrating a missing or semantically invalid *active* directive. Continue reporting legitimate unverified deployment and official-source checks. Tier 2 `29-system-config-integrity.rules` remains a disabled proposal; do not promote it without an explicit security/performance decision.
+All 49 published audit-rule-related V-IDs are mapped to active directives in the eight Ubuntu 22.04 implementations. The exact 49-row table is in `docs/03-RULE-SOURCING-AND-MAINTENANCE.md`. This **closes the missing audit-rule-ID inventory gap**, but **does not** close official DISA ZIP/XCCDF hash verification, conditional image path/package prerequisites, kernel loading, or actual STIG compliance. Do not reopen the "missing 49 audit-rule IDs" issue without naming a specific V-ID and demonstrating a missing or semantically invalid *active* directive. Continue reporting legitimate unverified deployment and official-source checks. Tier 2 `29-system-config-integrity.rules` now has narrowly scoped **active** system shell startup watches; its broad `/etc` and loader candidate watches remain disabled. Do not promote the broad watch without an explicit security/performance decision.
 
+
+## v0.17 Tier 2 integrity policy decision — active targeted shell watches
+
+**Decision:** CVE-independent modifications to system shell initialization are **mandatory Tier 2**; the broad `/etc`-directory proposal remains *inactive*. Each implementation now contains active watches under `29-system-config-integrity.rules` for `/etc/profile`, its platform Bash initialization path (`/etc/bashrc` on RHEL-family/Amazon, `/etc/bash.bashrc` on Ubuntu/Debian/SLES) and `/etc/profile.d` for non-Debian profiles. Debian's `profile.d` watch remains commented because base-files does not guarantee it. No per-user home dotfile watches were activated. Exactly **348 active rules added** across the 80 variants; otherwise active directives unchanged from v0.16.4.
+
+**Do not re-open settled issues:** `/etc/ld.so.preload` is intentionally a single commented candidate; it cannot observe creation of a missing file. Neither a broad `/etc` watch nor SysRq procfs watches were activated. SSH/sudoers watches are already active in some Tier 1 profiles, but others still need package-specific validation. Never claim all these objectives are complete merely because the shell-init watches are active. The settled `-f 2` placement/policy and separate CVE-named Tier 3 files remain unchanged.
+
+**Path evidence:** Default directory or binary paths are supported by published vendor docs/package manifests, *not* proven present on every golden/minimal image. `path=` and `dir=` watches require an existing target; check package/image inventories and handle N/A/waiver as prescribed. No host logs or kernel-loading evidence are available.
 
 ## 1. Project objective and boundaries
 
@@ -27,10 +35,10 @@ Produce a comprehensive, maintainable enterprise **Linux Audit Policy** for on-p
 
 ## 2. Source of truth, layout, and inventory
 
-Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.16.4 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
+Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.17 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
 
 ```text
-enterprise-audit-policy-v0.16.4/
+enterprise-audit-policy-v0.17/
 ├── README.md
 ├── docs/
 │   ├── 01-IMPLEMENTATION-GUIDE.md
@@ -47,7 +55,7 @@ enterprise-audit-policy-v0.16.4/
 - **ARM64 (`aarch64`)**: a separate, complete implementation in the nested `rules/<environment>/<os-version>/aarch64/`.
 - Both architecture choices contain their own `tier-1-baseline/`, `tier-2-core-security/`, `tier-3-threat-specific/`, and `finalize/`.
 - **Never recursively install a profile directory**, because that would combine mutually exclusive x86_64 and ARM64 sets. Never combine different OS or cloud profiles.
-- **Count interpretation:** 25 rule files per implementation includes **comment-only candidates**: 276 of 2,000 files are comment-only (80 Tier 2 `29-system-config-integrity.rules`, 160 PHP2Shell CVE files, 28 on-prem cloud-host stubs, eight conditional MAC-policy files). File count does not indicate active sensor coverage.
+- **Count interpretation:** 25 rule files per implementation includes **comment-only candidates**: 196 of 2,000 files are comment-only (160 PHP2Shell CVE files, 28 on-prem cloud-host stubs, eight conditional MAC-policy files). In v0.16.x the count was 276 before activating 80 Tier 2 `29-system-config-integrity.rules` files. File count does not indicate active sensor coverage.
 
 **Profile inventory in v0.16.2:**
 
@@ -115,7 +123,7 @@ The general `30-exploitation.rules` remains Tier 3 and **is not renamed after a 
 |---|---|
 | User and root process execution | **Keep in Tier 2**; existing `execve`/`execveat` rules |
 | Broad `auid=unset` / non-root service-account execution | **Not automatically Tier 2**; specifically identified through PHP2Shell; use **scoped Tier 3** or EDR/Sysmon when justified |
-| `/etc/ld.so.preload` and system-wide shell config modification | **Tier 2 objective**, but resolve missing-path and volume issues first |
+| `/etc/ld.so.preload` and system-wide shell config modification | **Tier 2 objective**; v0.17 activates system shell watches; absent loader-file initial creation remains an unresolved gap |
 | SSH, sudoers, sensitive security config modification | Tier 1/2 objective; check existing coverage and avoid needless duplicates |
 | Magic SysRq modifications | Tier 2 **candidate**; kernel/path applicability unverified |
 | All users' `.bashrc`/`.profile` modifications | Tier 3 / targeted hunt, not fleet-wide baseline |
@@ -123,7 +131,7 @@ The general `30-exploitation.rules` remains Tier 3 and **is not renamed after a 
 | CVE-specific socket/syscall sequences, service shell behavior | Tier 3 |
 | Audit event parsing and field correlation in Splunk | Mandatory **integration requirement**, not necessarily another kernel audit rule |
 
-`29-system-config-integrity.rules` was added in v0.16 as a **commented, inactive Tier 2 proposal** for `dir=/etc perm=wa`, with conditional SysRq and narrower leaf-path alternatives. **Do not uncomment or mark it covered without explicit user approval**, review of existing overlaps, and volume assessment. The duplicated **commented** `/etc/ld.so.preload` candidate block was removed in v0.16.1; the remaining candidate is still inactive.
+`29-system-config-integrity.rules` was added in v0.16 as a **commented, inactive Tier 2 proposal** for `dir=/etc perm=wa`, with conditional SysRq and narrower leaf-path alternatives. In **v0.17, only targeted system shell startup watches were activated**. The broad `/etc`, SysRq and loader leaf-path candidates **remain inactive**; do not uncomment those without explicit user approval and applicability/volume assessment. The duplicated **commented** `/etc/ld.so.preload` candidate block was removed in v0.16.1; the remaining candidate is still inactive.
 
 ### Resolved review finding — repeated `/etc/ld.so.preload` text is NOT duplicate collection
 
@@ -131,9 +139,9 @@ The general `30-exploitation.rules` remains Tier 3 and **is not renamed after a 
 
 **Required review method:** Strip or ignore lines beginning with `#` when counting *active* audit directives; examine commented `# -a` candidates separately. Never infer duplication from a substring/reference count, which includes prose. Only reopen a duplication issue if (a) more than one equivalent active directive is actually present, (b) an unapproved candidate has been activated, or (c) another concrete functional defect is demonstrated. Otherwise report **“Resolved, explanatory comments consolidated; one inactive candidate; zero active directives; no action required.”**
 
-**Separate open decision:** Whether to activate any Tier 2 `/etc` integrity monitoring remains unresolved and requires explicit approval/volume review; do not conflate that coverage decision with the resolved duplicate-text finding. Broad `/etc` collection is not automatically preferable to targeted watches.
+**Separate open decision:** Whether to activate **broad** Tier 2 `/etc` integrity monitoring remains unresolved and requires explicit approval/volume review; targeted shell file watches were activated in v0.17; do not conflate that coverage decision with the resolved duplicate-text finding. Broad `/etc` collection is not automatically preferable to targeted watches.
 
-**Next requested substantive work (not yet approved for activation):** work through Tier 2 persistence/security-configuration coverage, then Tier 3 hunting candidates individually. Explain choices and collection-cost tradeoffs before altering the mandatory baseline.
+**Next substantive work:** evaluate the remaining unaddressed Tier 2 loader creation, SSH/sudoers and SysRq gaps, then Tier 3 hunting candidates individually. Explain choices and collection-cost tradeoffs before altering the mandatory baseline.
 
 ## 6. OS, architecture and cloud specifics
 
@@ -209,7 +217,7 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 
 ## 10. Carry-forward work queue (not authorization to implement)
 
-1. **Review Tier 2 critical persistence/security-config coverage:** `ld.so.preload` creation/modification, system shell profiles, SSH/sudoers, and possible SysRq. Compare current targeted rules to proposed `29-system-config-integrity.rules`; decide narrow watches versus broad `/etc` based on noise/overlap; obtain explicit promotion decision.
+1. **Review remaining Tier 2 configuration-integrity gaps:** shell startup `/etc/profile`, Bash system-wide configuration and non-Debian `profile.d` now have active watches. Independently assess the initial-creation limitation of absent `/etc/ld.so.preload`, incomplete SSH/sudoers coverage on package-dependent profiles, and the conditional SysRq candidate. Broad `/etc` monitoring remains *unapproved*.
 2. **Review Tier 3 non-CVE hunts separately:** user shell initialization modifications, sudoers read activity, service-scoped investigations. Never auto-promote to mandatory baseline simply because Splunk has an analytic.
 3. **Review CVE file applicability and overlap:** verify vulnerability/CVE references and supported kernel/OS assumptions; consider shared collection keys and whether inactive PHP2Shell selectors actually support the intended correlation. Preserve distinct CVE filenames.
 4. **Continue offline product STIG/path completeness:** authoritative Ubuntu 22.04 V2R10, RHEL, AlmaLinux, Oracle Linux, SUSE, Amazon Linux and other supported OS profiles; package/image defaults and conditional guest agents. Do not falsely claim parity/compliance.

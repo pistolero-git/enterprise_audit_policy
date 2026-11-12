@@ -1,4 +1,13 @@
-# 01 — Implementation Guide | v0.16.4
+# 01 — Implementation Guide | v0.17
+
+## v0.17 — Targeted mandatory Tier 2 shell-startup monitoring
+
+`29-system-config-integrity.rules` now includes **active** watch rules for `/etc/profile` and the OS-family Bash startup configuration (`/etc/bashrc` on RPM-family/Amazon, `/etc/bash.bashrc` on Ubuntu/Debian/SLES). On non-Debian profiles it also monitors `/etc/profile.d` (including new files within the watched subtree). These watch `wa` access, not reads or command contents. Both b64 and b32 are present on x86_64; ARM64 has b64 only.
+
+**Deployment preflight:** Confirm that active paths exist as the expected file or directory on the selected OS/image before deploying. Package-file lists establish normal installed paths, not runtime guarantees. Debian does **not** have an automatically enabled `/etc/profile.d` watch; uncomment it only if the directory exists *and* `/etc/profile` sources it. If any applicable mandatory path is absent, remediate image prerequisites or obtain the correct applicability/exception decision; never silently disregard the rule.
+
+**Boundaries:** No broad `/etc` rule was activated. The commented loader leaf-path candidate cannot watch initial creation if the file is absent. For creation detection, explicitly evaluate a broad parent directory rule versus an EDR/Sysmon file-create source; record residual gap or an authorized waiver where applicable. SSH/sudoers watches may already exist in Tier 1; keep that provenance and only enable missing package-dependent watches when their paths exist. SysRq and user-home startup hunting remain separate/conditional. No host evidence exists for this release.
+
 
 ## v0.16.4 — Ubuntu 22.04 STIG coverage boundary
 
@@ -186,7 +195,7 @@ If package/image access is unavailable, retain conditional rules as **unverified
 
 ## v0.16 — Selecting CVE and hunting rules
 
-**Mandatory baseline:** Continue installing the existing Tier 1 + active Tier 2 rules. The new `29-system-config-integrity.rules` contains **commented-out Tier 2 candidates only**. Its `/etc` watch is CVE-independent but broad, and needs explicit baseline promotion, EPS analysis, and overlap review. The file may be present in the distribution without enabling additional collection.
+**Mandatory baseline (current v0.17):** Continue installing Tier 1 and all applicable Tier 2 rules. The `29-system-config-integrity.rules` file **now includes active, targeted shell-startup integrity watches** added in v0.17; in the original v0.16 release it contained only commented-out candidates. Its broader `/etc` watch **remains commented out** pending explicit approval, EPS analysis, and overlap review. Do not confuse the activated shell watches with approval for blanket `/etc` monitoring.
 
 **CVE actions:** Confirm OS/package/kernel susceptibility using the relevant vendor advisory, then **patch or apply an approved mitigation**. If exposure persists or threat monitoring is required, select the matching `CVE-YYYY-NNNN.rules` from Tier 3; this **detects selected behavior only** and is not an effective substitute for patching. Do not copy all `CVE-*.rules` by wildcard. Copies of matching rules across two CVE files are intentional for individual selection, **not** authorization to load every copy. If multiple CVEs require identical rules, install one equivalent set and document both CVE requirements; account for overlapping keys and SPL filters. Rule keys such as `af_alg`, `splice_user` and `process_creation` must match the selected detection or be translated in SPL.
 

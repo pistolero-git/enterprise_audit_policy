@@ -1,9 +1,19 @@
-# Enterprise Linux Audit Policy — v0.16.4
+# Enterprise Linux Audit Policy — v0.17
 
 **Status: ENGINEERING CANDIDATE — no profile is certified STIG-compliant or production-approved by this release.**
 
 v0.15 retains the v0.14 remediation of several *static* defects identified in the independent v0.11 validation report. **It does not close the remaining platform STIG-reconciliation, file-existence, agent-installation, on-host event-generation, performance, or SIEM-validation gates.**
 
+
+## v0.17 — Targeted Tier 2 system startup integrity (active rules)
+
+- **Approved narrow, CVE-independent Tier 2 coverage** in all 80 implementations: audit modifications/attribute changes to `/etc/profile` and the OS-family system-wide Bash startup file (`/etc/bashrc` on RHEL-derived/Amazon/Oracle/Rocky/Alma; `/etc/bash.bashrc` on Ubuntu/Debian/SLES).
+- Add `/etc/profile.d` subtree monitoring for RHEL-derived/Amazon/Oracle/Rocky/Alma, Ubuntu and SLES where vendor documentation supports it. On **Debian 12/13**, `/etc/profile.d` is **commented/conditional**, because Debian base-files does not guarantee that directory or its sourcing in `/etc/profile`.
+- x86_64 variants include both `b64` and `b32` file-watch rules; ARM64 uses native `b64` only. **348 active audit directives added** across 80 variants. All previous active directives, keys, STIG watches, `-f 2`, `-e 2`, and CVE-specific Tier 3 files are preserved.
+- **No broad `/etc` recursive watch activated.** The `/etc/ld.so.preload` leaf-path candidate remains disabled: a missing file cannot be reliably watched as a leaf, and initial creation requires a parent-directory monitor or complementary file telemetry. Do not claim complete preload creation detection from these additions.
+- SSH/sudoers watches already exist in a subset of Tier 1 profiles; remaining OS-specific package-dependent targets remain conditional and must be verified against deployed image content. SysRq procfs candidates and user-home shell modifications remain inactive.
+- **Active-file inventory:** 1,804 of 2,000 `.rules` files contain active directives; **196 files remain comment-only** (160 PHP2Shell CVE, 28 on-prem cloud stubs, 8 conditional MAC-policy). Previous release notes below record the historical v0.16.x count of 276 before the 80 Tier 2 proposal files acquired active watches.
+- Release state remains **engineering candidate**. Standard vendor paths do not guarantee presence on every minimal/custom image. No host-load, event generation, EPS, or Splunk collection validation was performed.
 
 ## v0.16.4 — Ubuntu 22.04 published-source reconciliation (no active rule change)
 

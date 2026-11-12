@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.4 | azure/almalinux9
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.17 | azure/almalinux9
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.4  |  [azure/almalinux9]
+# Enterprise Linux Audit v0.17  |  [azure/almalinux9]
 # Tier: tier-1-baseline
 # Purpose: failure mode and loginuid integrity
 # Source/authority: Applicable STIG audit framework; linux-audit auditctl/audit.rules
