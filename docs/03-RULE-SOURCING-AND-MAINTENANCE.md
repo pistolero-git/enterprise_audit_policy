@@ -1,4 +1,4 @@
-# 03 — Rule Sourcing and Maintenance | v0.16.2
+# 03 — Rule Sourcing and Maintenance | v0.16.3
 
 ## Purpose and release rule
 

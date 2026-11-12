@@ -3,7 +3,7 @@
 > **Purpose:** Portable handoff instructions for AI coding/review agents working on this Linux `auditd` policy project. Read this file, the current package `README.md`, and all three `docs/` guides before changing rules. Treat statements here as project decisions, **not** proof that an individual host or STIG requirement is compliant.
 >
 > **As of:** 2026-11-11  
-> **Current release:** `enterprise-audit-policy-v0.16.2.zip`  
+> **Current release:** `enterprise-audit-policy-v0.16.3.zip`  
 > **Release state:** **ENGINEERING CANDIDATE**. No OS/cloud/architecture profile is certified STIG-compliant, tested on a representative host, or production-approved.
 
 ## 1. Project objective and boundaries
@@ -22,10 +22,10 @@ Produce a comprehensive, maintainable enterprise **Linux Audit Policy** for on-p
 
 ## 2. Source of truth, layout, and inventory
 
-Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.16.2 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
+Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.16.3 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
 
 ```text
-enterprise-audit-policy-v0.16.2/
+enterprise-audit-policy-v0.16.3/
 ├── README.md
 ├── docs/
 │   ├── 01-IMPLEMENTATION-GUIDE.md
@@ -118,7 +118,15 @@ The general `30-exploitation.rules` remains Tier 3 and **is not renamed after a 
 | CVE-specific socket/syscall sequences, service shell behavior | Tier 3 |
 | Audit event parsing and field correlation in Splunk | Mandatory **integration requirement**, not necessarily another kernel audit rule |
 
-`29-system-config-integrity.rules` was added in v0.16 as a **commented, inactive Tier 2 proposal** for `dir=/etc perm=wa`, with conditional SysRq and narrower leaf-path alternatives. **Do not uncomment or mark it covered without explicit user approval**, review of existing overlaps, and volume assessment. The duplicated **commented** `/etc/ld.so.preload` candidate block was removed in v0.16.1; the remaining candidate is still inactive. Broad `/etc` collection is not automatically preferable to targeted watches.
+`29-system-config-integrity.rules` was added in v0.16 as a **commented, inactive Tier 2 proposal** for `dir=/etc perm=wa`, with conditional SysRq and narrower leaf-path alternatives. **Do not uncomment or mark it covered without explicit user approval**, review of existing overlaps, and volume assessment. The duplicated **commented** `/etc/ld.so.preload` candidate block was removed in v0.16.1; the remaining candidate is still inactive.
+
+### Resolved review finding — repeated `/etc/ld.so.preload` text is NOT duplicate collection
+
+**Settled disposition (v0.16.3):** The old finding that `29-system-config-integrity.rules` contained four references to the loader preload file was **a comment-text false positive**, not duplicate rules. In v0.16.2 the path appeared on four lines (explanation plus one `# -a ...` candidate), with **zero active directives**. In v0.16.3 all 80 copies were cleaned up so that the literal path appears **exactly once**, in the single commented-out leaf-path proposal. The broad directory integrity candidate is also commented out. This cleanup **did not enable any rules**.
+
+**Required review method:** Strip or ignore lines beginning with `#` when counting *active* audit directives; examine commented `# -a` candidates separately. Never infer duplication from a substring/reference count, which includes prose. Only reopen a duplication issue if (a) more than one equivalent active directive is actually present, (b) an unapproved candidate has been activated, or (c) another concrete functional defect is demonstrated. Otherwise report **“Resolved, explanatory comments consolidated; one inactive candidate; zero active directives; no action required.”**
+
+**Separate open decision:** Whether to activate any Tier 2 `/etc` integrity monitoring remains unresolved and requires explicit approval/volume review; do not conflate that coverage decision with the resolved duplicate-text finding. Broad `/etc` collection is not automatically preferable to targeted watches.
 
 **Next requested substantive work (not yet approved for activation):** work through Tier 2 persistence/security-configuration coverage, then Tier 3 hunting candidates individually. Explain choices and collection-cost tradeoffs before altering the mandatory baseline.
 
@@ -181,6 +189,12 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 - Previous review reports and CSV matrices may be provided as supporting evidence, but the most recent **verified ZIP** is canonical for actual active rules.
 - Validate created artifacts exist before giving download paths. Prefer small, transparent diffs and a concise validation summary. If you cannot prove something without a host, label it **offline candidate / requires host validation**, not approved.
 
+## 9B. v0.16.3 resolved recurring loader-path review comment
+
+- In the 80 copies of `29-system-config-integrity.rules`, consolidate the prose references so `/etc/ld.so.preload` appears on **one commented candidate line** only.
+- **Zero active rules were added, removed or changed** compared with v0.16.2; the candidate remains inactive. Do not file this as an unresolved duplicate based on raw text matches.
+- The approved `-f 2` Tier 1 control, CVE rules, all architecture profiles, and mandatory baseline remain unchanged.
+
 ## 9A. v0.16.2 formatting-only status
 
 - The **560** previously nonstandard first-line headers (**80** inactive `29-system-config-integrity.rules` proposals and **480** CVE-specific files) now start with the same `# TARGET ARCHITECTURE:` header format as the other rule files. Existing CVE rationale, scope, inactive/active state, audit keys, and associated comments are preserved.
@@ -196,4 +210,4 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 4. **Continue offline product STIG/path completeness:** authoritative Ubuntu 22.04 V2R10, RHEL, AlmaLinux, Oracle Linux, SUSE, Amazon Linux and other supported OS profiles; package/image defaults and conditional guest agents. Do not falsely claim parity/compliance.
 5. **Maintain release provenance:** keep architecture/release headers, README and all three guide titles synchronized for every subsequent version. v0.16.1 fixed the previously reported housekeeping issues without changing active directives.
 
-**If another AI receives only this file:** ask for the latest package ZIP (currently v0.16.2) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.
+**If another AI receives only this file:** ask for the latest package ZIP (currently v0.16.3) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.

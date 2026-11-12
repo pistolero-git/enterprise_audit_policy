@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | aws/rhel9
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.3 | aws/rhel9
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.2  |  [aws/rhel9]
+# Enterprise Linux Audit v0.16.3  |  [aws/rhel9]
 # Tier: finalize
 # Purpose: lock audit policy AFTER all selected rules are validated
 # Source/authority: DISA applicable STIG if required; Linux Audit upstream finalization

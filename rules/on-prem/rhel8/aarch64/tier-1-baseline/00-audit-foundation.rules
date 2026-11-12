@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | on-prem/rhel8
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.3 | on-prem/rhel8
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.2  |  [on-prem/rhel8]
+# Enterprise Linux Audit v0.16.3  |  [on-prem/rhel8]
 # Tier: tier-1-baseline
 # Purpose: initialize managed policy
 # Source/authority: linux-audit/audit-userspace rules/10-base-config.rules; enterprise policy

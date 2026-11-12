@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | on-prem/debian12
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.3 | on-prem/debian12
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.2  |  [on-prem/debian12]
+# Enterprise Linux Audit v0.16.3  |  [on-prem/debian12]
 # Tier: tier-1-baseline
 # Purpose: failure mode and loginuid integrity
 # Source/authority: Applicable STIG audit framework; linux-audit auditctl/audit.rules

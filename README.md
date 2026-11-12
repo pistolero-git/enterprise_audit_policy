@@ -1,9 +1,16 @@
-# Enterprise Linux Audit Policy — v0.16.2
+# Enterprise Linux Audit Policy — v0.16.3
 
 **Status: ENGINEERING CANDIDATE — no profile is certified STIG-compliant or production-approved by this release.**
 
 v0.15 retains the v0.14 remediation of several *static* defects identified in the independent v0.11 validation report. **It does not close the remaining platform STIG-reconciliation, file-existence, agent-installation, on-host event-generation, performance, or SIEM-validation gates.**
 
+
+## v0.16.3 — inactive Tier 2 proposal clarification (no audit behavior changes)
+
+- **Resolved recurring false positive:** every `29-system-config-integrity.rules` file contains exactly **one** textual `/etc/ld.so.preload` occurrence, on one **commented-out** (inactive) leaf-path audit rule. The other comments describe applicability without repeating the path. Previously the same path appeared four times in comments but represented only one candidate, not duplicate rules.
+- The broad `/etc` integrity proposal and the loader leaf-path alternative both remain **inactive**, pending a separate Tier 2 promotion/collection-volume decision. No Tier 2 collection was added.
+- Standardized release metadata and the three existing guide titles to `v0.16.3`. All **2,000 active rule directive sequences match v0.16.2 exactly**; the settled `-f 2` and `-e 2` controls, tiers, and all 80 architecture variants are unchanged.
+- Reviewers must count **actual rule directives**, not plain-text occurrences within explanatory comments, when reporting duplicates. The AI handoff `AGENTS.md` records this as a resolved issue.
 
 ## v0.16.2 — header-format normalization (no active directive changes)
 

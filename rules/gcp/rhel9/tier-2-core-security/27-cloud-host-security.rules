@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.2 | gcp/rhel9
+# TARGET ARCHITECTURE: x86_64 | v0.16.3 | gcp/rhel9
 # Enterprise Linux Audit v0.16 | gcp/rhel9 | mandatory Tier 2 cloud host controls
 # Source context: Google guest agent; Cloud Audit Logs required for firewall/IAM/API
 # Host auditd cannot observe cloud-native API calls, security-group, IAM or NSG changes initiated remotely.

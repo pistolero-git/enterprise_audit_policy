@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.2 | aws/ubuntu2604
+# TARGET ARCHITECTURE: x86_64 | v0.16.3 | aws/ubuntu2604
 # Enterprise Linux Audit v0.16 | aws/ubuntu2604 | mandatory Tier 2 cloud host controls
 # Source context: AWS SSM Agent and EC2 cloud-init; CloudTrail required for API/SG/IAM
 # Host auditd cannot observe cloud-native API calls, security-group, IAM or NSG changes initiated remotely.

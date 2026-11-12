@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | on-prem/rocky8
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.3 | on-prem/rocky8
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.2  |  [on-prem/rocky8]
+# Enterprise Linux Audit v0.16.3  |  [on-prem/rocky8]
 # Tier: tier-2-core-security
 # Purpose: systemd persistence and optional cron/loader persistence
 # Source/authority: Enterprise SOC/IR minimum

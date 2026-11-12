@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | aws/ubuntu2204
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.3 | aws/ubuntu2204
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.2  |  [aws/ubuntu2204]
+# Enterprise Linux Audit v0.16.3  |  [aws/ubuntu2204]
 # Tier: tier-1-baseline
 # Purpose: MAC administrative policy changes and enforcement context
 # Source/authority: DISA applicable product STIG/SRG as applicable; vendor SELinux/AppArmor docs

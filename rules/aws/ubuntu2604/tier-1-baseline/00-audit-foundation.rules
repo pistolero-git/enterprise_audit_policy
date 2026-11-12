@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.2 | aws/ubuntu2604
-# Enterprise Linux Audit v0.16.2  |  [aws/ubuntu2604]
+# TARGET ARCHITECTURE: x86_64 | v0.16.3 | aws/ubuntu2604
+# Enterprise Linux Audit v0.16.3  |  [aws/ubuntu2604]
 # Tier: tier-1-baseline
 # Purpose: initialize managed policy
 # Source/authority: linux-audit/audit-userspace rules/10-base-config.rules; enterprise policy
