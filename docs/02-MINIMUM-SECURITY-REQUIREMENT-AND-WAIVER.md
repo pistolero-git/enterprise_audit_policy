@@ -1,4 +1,4 @@
-# 02 — Minimum Security Requirement and Waiver | v0.15
+# 02 — Minimum Security Requirement and Waiver | v0.16.1
 
 ## Mandatory scope
 

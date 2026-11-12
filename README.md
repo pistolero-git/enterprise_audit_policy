@@ -1,9 +1,18 @@
-# Enterprise Linux Audit Policy — v0.16
+# Enterprise Linux Audit Policy — v0.16.1
 
 **Status: ENGINEERING CANDIDATE — no profile is certified STIG-compliant or production-approved by this release.**
 
 v0.15 retains the v0.14 remediation of several *static* defects identified in the independent v0.11 validation report. **It does not close the remaining platform STIG-reconciliation, file-existence, agent-installation, on-host event-generation, performance, or SIEM-validation gates.**
 
+
+## v0.16.1 — housekeeping-only release (no active directive changes)
+
+- All **2,000** `.rules` files have consistent `v0.16.1` target-architecture release headers. The 28 RHEL 9 ARM64 Tier 1 files now place the target-architecture header first; the historical ARM translation/provenance comment remains intact beneath it.
+- Removed the duplicate **commented** `/etc/ld.so.preload` leaf-watch proposal from all 80 copies of `29-system-config-integrity.rules`. The remaining proposal is still **inactive** pending approval and noise/overlap analysis.
+- Updated all three guide title headings to `v0.16.1`.
+- Added a comment to every `00-audit-foundation.rules` identifying `18-security-critical.rules` as the location of the **unchanged, active** `-f 2` fail-secure setting. Keep these files together during implementation.
+- **Inventory clarity:** 25 `.rules` files per implementation is a file count, **not** 25 active sensors. Of 2,000 files, **276 contain no active audit directives** (80 `29-system-config-integrity.rules`; 80 each `CVE-2026-109618.rules` and `CVE-2026-109619.rules`; 28 on-prem `27-cloud-host-security.rules`; eight conditional `14-mac-policy.rules`). These commented-only files remain included intentionally and must not be described as active collection. Different profiles may have other commented candidate lines within active files.
+- **No active audit directives were changed**, no directory layout was altered, and all 80 profiles retain `-f 2`. Applicability, STIG reconciliation, and host validation gates remain open.
 
 ## v0.16: CVE-specific Tier 3 + CVE-independent Tier 2 integrity
 

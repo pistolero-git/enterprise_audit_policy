@@ -1,4 +1,4 @@
-# Enterprise Linux Audit Policy v0.16 | gcp/rhel9/aarch64 | Tier 2 — PROPOSAL; inactive pending collection-volume decision
+# Enterprise Linux Audit Policy v0.16.1 | gcp/rhel9/aarch64 | Tier 2 — PROPOSAL; inactive pending collection-volume decision
 # Objective: persistent/system security config changes irrespective of CVE association.
 # /etc exists on standard Linux hosts; an individual /etc/ld.so.preload file might NOT.
 # Directory-based audit catches modifications and creation under /etc, including
@@ -18,6 +18,3 @@
 # -a always,exit -F path=/etc/ld.so.preload -F perm=wa -k t2_loader_preload
 # Warning: /etc/ld.so.preload is often absent, so this is not reliable for creation.
 
-# Narrow leaf-path alternative, only where present on the chosen image:
-# -a always,exit -F path=/etc/ld.so.preload -F perm=wa -k t2_loader_preload
-# Warning: /etc/ld.so.preload is often absent, so this is not reliable for creation.

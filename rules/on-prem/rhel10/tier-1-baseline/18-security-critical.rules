@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16 | on-prem/rhel10
-# Enterprise Linux Audit v0.16  |  [on-prem/rhel10]
+# TARGET ARCHITECTURE: x86_64 | v0.16.1 | on-prem/rhel10
+# Enterprise Linux Audit v0.16.1  |  [on-prem/rhel10]
 # Tier: tier-1-baseline
 # Purpose: failure mode and loginuid integrity
 # Source/authority: Applicable STIG audit framework; linux-audit auditctl/audit.rules

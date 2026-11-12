@@ -3,7 +3,7 @@
 > **Purpose:** Portable handoff instructions for AI coding/review agents working on this Linux `auditd` policy project. Read this file, the current package `README.md`, and all three `docs/` guides before changing rules. Treat statements here as project decisions, **not** proof that an individual host or STIG requirement is compliant.
 >
 > **As of:** 2026-11-11  
-> **Current release:** `enterprise-audit-policy-v0.16.zip`  
+> **Current release:** `enterprise-audit-policy-v0.16.1.zip`  
 > **Release state:** **ENGINEERING CANDIDATE**. No OS/cloud/architecture profile is certified STIG-compliant, tested on a representative host, or production-approved.
 
 ## 1. Project objective and boundaries
@@ -22,10 +22,10 @@ Produce a comprehensive, maintainable enterprise **Linux Audit Policy** for on-p
 
 ## 2. Source of truth, layout, and inventory
 
-Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.16 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
+Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.16.1 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
 
 ```text
-enterprise-audit-policy-v0.16/
+enterprise-audit-policy-v0.16.1/
 ├── README.md
 ├── docs/
 │   ├── 01-IMPLEMENTATION-GUIDE.md
@@ -42,8 +42,9 @@ enterprise-audit-policy-v0.16/
 - **ARM64 (`aarch64`)**: a separate, complete implementation in the nested `rules/<environment>/<os-version>/aarch64/`.
 - Both architecture choices contain their own `tier-1-baseline/`, `tier-2-core-security/`, `tier-3-threat-specific/`, and `finalize/`.
 - **Never recursively install a profile directory**, because that would combine mutually exclusive x86_64 and ARM64 sets. Never combine different OS or cloud profiles.
+- **Count interpretation:** 25 rule files per implementation includes **comment-only candidates**: 276 of 2,000 files are comment-only (80 Tier 2 `29-system-config-integrity.rules`, 160 PHP2Shell CVE files, 28 on-prem cloud-host stubs, eight conditional MAC-policy files). File count does not indicate active sensor coverage.
 
-**Profile inventory in v0.16:**
+**Profile inventory in v0.16.1:**
 
 | Environment | OS directories |
 |---|---|
@@ -102,7 +103,7 @@ The general `30-exploitation.rules` remains Tier 3 and **is not renamed after a 
 | CVE-specific socket/syscall sequences, service shell behavior | Tier 3 |
 | Audit event parsing and field correlation in Splunk | Mandatory **integration requirement**, not necessarily another kernel audit rule |
 
-`29-system-config-integrity.rules` was added in v0.16 as a **commented, inactive Tier 2 proposal** for `dir=/etc perm=wa`, with conditional SysRq and narrower leaf-path alternatives. **Do not uncomment or mark it covered without explicit user approval**, review of existing overlaps, and volume assessment. The file contains a **duplicated commented `/etc/ld.so.preload` candidate block** in v0.16; remove that editorial duplication only as part of an approved follow-up. Broad `/etc` collection is not automatically preferable to targeted watches.
+`29-system-config-integrity.rules` was added in v0.16 as a **commented, inactive Tier 2 proposal** for `dir=/etc perm=wa`, with conditional SysRq and narrower leaf-path alternatives. **Do not uncomment or mark it covered without explicit user approval**, review of existing overlaps, and volume assessment. The duplicated **commented** `/etc/ld.so.preload` candidate block was removed in v0.16.1; the remaining candidate is still inactive. Broad `/etc` collection is not automatically preferable to targeted watches.
 
 **Next requested substantive work (not yet approved for activation):** work through Tier 2 persistence/security-configuration coverage, then Tier 3 hunting candidates individually. Explain choices and collection-cost tradeoffs before altering the mandatory baseline.
 
@@ -160,7 +161,7 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 - Preserve this package's **three tiers + Finalize** and OS/provider/architecture directories. Do not collapse into common files or add mandatory new tooling.
 - When asked to implement changes, state **exactly which active directives change**, which are merely comments/candidates, and which profiles are affected. Distinguish CVE threat sensors from CVE-independent SOC baseline requirements.
 - **Do not fabricate STIG mapping, source hashes, CVE associations, host test results, install paths, or release approval.** Cite precise sources and note uncertainty.
-- Keep the three existing docs and README in sync. **Known housekeeping:** the v0.16 ZIP's three guides still have `v0.15` document title headings, despite v0.16 content, and parts of the README contain older release-language. Correct only in an approved revision; version consistency is a compliance/provenance concern.
+- Keep the three existing docs and README in sync. **Release housekeeping completed in v0.16.1:** all 2,000 `.rules` files carry consistent v0.16.1 release metadata; 28 RHEL 9 ARM64 baseline headers are normalized; all three guide titles are current; duplicate commented preload candidates are removed; foundation comments reference the unchanged `-f 2` setting in `18-security-critical.rules`. Historical release-language remains in the README where it describes earlier work.
 - Previous review reports and CSV matrices may be provided as supporting evidence, but the most recent **verified ZIP** is canonical for actual active rules.
 - Validate created artifacts exist before giving download paths. Prefer small, transparent diffs and a concise validation summary. If you cannot prove something without a host, label it **offline candidate / requires host validation**, not approved.
 
@@ -170,6 +171,6 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 2. **Review Tier 3 non-CVE hunts separately:** user shell initialization modifications, sudoers read activity, service-scoped investigations. Never auto-promote to mandatory baseline simply because Splunk has an analytic.
 3. **Review CVE file applicability and overlap:** verify vulnerability/CVE references and supported kernel/OS assumptions; consider shared collection keys and whether inactive PHP2Shell selectors actually support the intended correlation. Preserve distinct CVE filenames.
 4. **Continue offline product STIG/path completeness:** authoritative Ubuntu 22.04 V2R10, RHEL, AlmaLinux, Oracle Linux, SUSE, Amazon Linux and other supported OS profiles; package/image defaults and conditional guest agents. Do not falsely claim parity/compliance.
-5. **Normalize document headings and release provenance** in an approved next version, and correct repeated commented candidates in Tier 2 file before any activation.
+5. **Maintain release provenance:** keep architecture/release headers, README and all three guide titles synchronized for every subsequent version. v0.16.1 fixed the previously reported housekeeping issues without changing active directives.
 
-**If another AI receives only this file:** ask for the latest package ZIP (currently v0.16) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.
+**If another AI receives only this file:** ask for the latest package ZIP (currently v0.16.1) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.

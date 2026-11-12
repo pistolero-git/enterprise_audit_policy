@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16 | aws/almalinux9
-# Enterprise Linux Audit v0.16  |  [aws/almalinux9]
+# TARGET ARCHITECTURE: x86_64 | v0.16.1 | aws/almalinux9
+# Enterprise Linux Audit v0.16.1  |  [aws/almalinux9]
 # Tier: tier-1-baseline
 # Purpose: MAC administrative policy changes and enforcement context
 # Source/authority: DISA applicable product STIG/SRG as applicable; vendor SELinux/AppArmor docs

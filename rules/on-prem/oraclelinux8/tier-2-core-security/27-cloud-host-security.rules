@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16 | on-prem/oraclelinux8
-# Enterprise Linux Audit v0.16  |  [on-prem/oraclelinux8]
+# TARGET ARCHITECTURE: x86_64 | v0.16.1 | on-prem/oraclelinux8
+# Enterprise Linux Audit v0.16.1  |  [on-prem/oraclelinux8]
 # Tier: tier-2-core-security
 # Purpose: cloud tooling on on-prem hybrid-connected Linux
 # Source/authority: Enterprise SOC/IR minimum

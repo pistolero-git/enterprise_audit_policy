@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16 | aws/amazon-linux-2027
-# Enterprise Linux Audit v0.16  |  [aws/amazon-linux-2027]
+# TARGET ARCHITECTURE: x86_64 | v0.16.1 | aws/amazon-linux-2027
+# Enterprise Linux Audit v0.16.1  |  [aws/amazon-linux-2027]
 # Tier: finalize
 # Purpose: lock audit policy AFTER all selected rules are validated
 # Source/authority: DISA applicable STIG if required; Linux Audit upstream finalization

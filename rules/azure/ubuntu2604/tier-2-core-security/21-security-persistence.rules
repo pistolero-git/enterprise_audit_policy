@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16 | azure/ubuntu2604
-# Enterprise Linux Audit v0.16  |  [azure/ubuntu2604]
+# TARGET ARCHITECTURE: x86_64 | v0.16.1 | azure/ubuntu2604
+# Enterprise Linux Audit v0.16.1  |  [azure/ubuntu2604]
 # Tier: tier-2-core-security
 # Purpose: systemd persistence and optional cron/loader persistence
 # Source/authority: Enterprise SOC/IR minimum

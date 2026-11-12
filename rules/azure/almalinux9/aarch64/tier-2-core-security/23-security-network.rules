@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16 | azure/almalinux9
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.1 | azure/almalinux9
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16  |  [azure/almalinux9]
+# Enterprise Linux Audit v0.16.1  |  [azure/almalinux9]
 # Tier: tier-2-core-security
 # Purpose: hostname and local resolver changes
 # Source/authority: Enterprise SOC/IR minimum

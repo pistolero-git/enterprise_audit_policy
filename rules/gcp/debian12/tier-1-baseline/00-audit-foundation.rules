@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16 | gcp/debian12
-# Enterprise Linux Audit v0.16  |  [gcp/debian12]
+# TARGET ARCHITECTURE: x86_64 | v0.16.1 | gcp/debian12
+# Enterprise Linux Audit v0.16.1  |  [gcp/debian12]
 # Tier: tier-1-baseline
 # Purpose: initialize managed policy
 # Source/authority: linux-audit/audit-userspace rules/10-base-config.rules; enterprise policy
@@ -7,6 +7,8 @@
 # Release state: engineering candidate; NOT independently certified STIG compliant.
 
 
+# NOTE: fail-secure -f 2 is configured in tier-1-baseline/18-security-critical.rules;
+# review both files together. This foundation file does not set the failure mode.
 # WARNING: -D clears existing kernel audit rules. Merge into site policy only with change approval.
 -D
 -b 8192

@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: aarch64 | v0.16 | aws/ubuntu2604
+# TARGET ARCHITECTURE: aarch64 | v0.16.1 | aws/ubuntu2604
 # Tier 1 target: Ubuntu 26.04 LTS (enterprise inheritance only)
 # Engineering basis: Ubuntu 24.04 V1R7 audit objectives, not an exact source-rule extraction
 # IMPORTANT: this profile is NOT an approved product STIG implementation.
