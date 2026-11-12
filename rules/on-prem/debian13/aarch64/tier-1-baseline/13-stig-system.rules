@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.1 | on-prem/debian13
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | on-prem/debian13
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.1  |  [on-prem/debian13]
+# Enterprise Linux Audit v0.16.2  |  [on-prem/debian13]
 # Tier: tier-1-baseline
 # Purpose: permission, deletion, module, time, and failed-file-access audit
 # Source/authority: DISA applicable product STIG/SRG objectives; linux-audit audit-userspace 30-stig.rules

@@ -1,4 +1,4 @@
-# 01 — Implementation Guide | v0.16.1
+# 01 — Implementation Guide | v0.16.2
 
 ## Scope and deployment decision
 

@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.1 | aws/rocky9
-# Enterprise Linux Audit v0.16.1  |  [aws/rocky9]
+# TARGET ARCHITECTURE: x86_64 | v0.16.2 | aws/rocky9
+# Enterprise Linux Audit v0.16.2  |  [aws/rocky9]
 # Tier: tier-1-baseline
 # Purpose: PAM/security authentication configuration
 # Source/authority: DISA applicable product STIG/SRG objective; enterprise authentication coverage

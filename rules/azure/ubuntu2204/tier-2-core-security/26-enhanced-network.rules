@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.1 | azure/ubuntu2204
-# Enterprise Linux Audit v0.16.1  |  [azure/ubuntu2204]
+# TARGET ARCHITECTURE: x86_64 | v0.16.2 | azure/ubuntu2204
+# Enterprise Linux Audit v0.16.2  |  [azure/ubuntu2204]
 # Tier: tier-2-core-security
 # Purpose: network connect() attribution to interactive-user processes
 # Source/authority: Enterprise SOC/IR minimum (former Tier 3)

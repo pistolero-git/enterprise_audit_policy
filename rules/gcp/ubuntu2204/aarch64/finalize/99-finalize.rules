@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.1 | gcp/ubuntu2204
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | gcp/ubuntu2204
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.1  |  [gcp/ubuntu2204]
+# Enterprise Linux Audit v0.16.2  |  [gcp/ubuntu2204]
 # Tier: finalize
 # Purpose: lock audit policy AFTER all selected rules are validated
 # Source/authority: DISA applicable STIG if required; Linux Audit upstream finalization

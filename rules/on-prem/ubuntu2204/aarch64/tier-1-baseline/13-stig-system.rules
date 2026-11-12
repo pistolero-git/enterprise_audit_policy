@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: aarch64 | v0.16.1 | on-prem/ubuntu2204
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | on-prem/ubuntu2204
 # Tier 1 target: Ubuntu 22.04 LTS (V2R10 reconciliation candidate)
 # Engineering basis: Ubuntu 24.04 V1R7 audit objectives, not an exact source-rule extraction
 # IMPORTANT: this profile is NOT an approved product STIG implementation.

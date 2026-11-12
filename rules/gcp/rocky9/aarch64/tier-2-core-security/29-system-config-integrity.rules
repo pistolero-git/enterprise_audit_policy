@@ -1,4 +1,5 @@
-# Enterprise Linux Audit Policy v0.16.1 | gcp/rocky9/aarch64 | Tier 2 — PROPOSAL; inactive pending collection-volume decision
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | gcp/rocky9
+# Enterprise Linux Audit Policy v0.16.2 | gcp/rocky9/aarch64 | Tier 2 — PROPOSAL; inactive pending collection-volume decision
 # Objective: persistent/system security config changes irrespective of CVE association.
 # /etc exists on standard Linux hosts; an individual /etc/ld.so.preload file might NOT.
 # Directory-based audit catches modifications and creation under /etc, including

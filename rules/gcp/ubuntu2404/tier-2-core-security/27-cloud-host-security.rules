@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.1 | gcp/ubuntu2404
+# TARGET ARCHITECTURE: x86_64 | v0.16.2 | gcp/ubuntu2404
 # Enterprise Linux Audit v0.16 | gcp/ubuntu2404 | mandatory Tier 2 cloud host controls
 # Source context: Google guest agent; Cloud Audit Logs required for firewall/IAM/API
 # Host auditd cannot observe cloud-native API calls, security-group, IAM or NSG changes initiated remotely.

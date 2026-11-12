@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.1 | on-prem/oraclelinux9
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | on-prem/oraclelinux9
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.1  |  [on-prem/oraclelinux9]
+# Enterprise Linux Audit v0.16.2  |  [on-prem/oraclelinux9]
 # Tier: tier-1-baseline
 # Purpose: user/group account database modifications
 # Source/authority: DISA applicable product STIG/SRG objective; Linux Audit upstream examples

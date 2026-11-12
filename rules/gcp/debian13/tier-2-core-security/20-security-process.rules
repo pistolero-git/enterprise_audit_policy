@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.16.1 | gcp/debian13
-# Enterprise Linux Audit v0.16.1  |  [gcp/debian13]
+# TARGET ARCHITECTURE: x86_64 | v0.16.2 | gcp/debian13
+# Enterprise Linux Audit v0.16.2  |  [gcp/debian13]
 # Tier: tier-2-core-security
 # Purpose: security administration process activity
 # Source/authority: Enterprise SOC/IR minimum

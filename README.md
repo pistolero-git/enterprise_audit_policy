@@ -1,9 +1,15 @@
-# Enterprise Linux Audit Policy — v0.16.1
+# Enterprise Linux Audit Policy — v0.16.2
 
 **Status: ENGINEERING CANDIDATE — no profile is certified STIG-compliant or production-approved by this release.**
 
 v0.15 retains the v0.14 remediation of several *static* defects identified in the independent v0.11 validation report. **It does not close the remaining platform STIG-reconciliation, file-existence, agent-installation, on-host event-generation, performance, or SIEM-validation gates.**
 
+
+## v0.16.2 — header-format normalization (no active directive changes)
+
+- Standardized the first-line `# TARGET ARCHITECTURE: ... | v0.16.2 | <environment>/<os>` header in **all 2,000** `.rules` files. In particular, added that header to **80 inactive Tier 2 `29-system-config-integrity.rules` proposals** and **480 CVE-named Tier 3 rule files**, retaining their original descriptions and selectors.
+- Synchronized rule release metadata, README, and all three existing guide titles to `v0.16.2`. The `AGENTS.md` AI handoff is maintained separately and is not a fourth customer guide.
+- **Zero active audit directives changed** from v0.16.1. No file names, rule locations, OS/cloud/architecture profiles, candidate activation status, or `-f 2`/`-e 2` settings were changed. The package remains an **engineering candidate**, not production-approved.
 
 ## v0.16.1 — housekeeping-only release (no active directive changes)
 

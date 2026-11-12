@@ -1,6 +1,6 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.1 | aws/amazon-linux-2023
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | aws/amazon-linux-2023
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
-# Enterprise Linux Audit v0.16.1  |  [aws/amazon-linux-2023]
+# Enterprise Linux Audit v0.16.2  |  [aws/amazon-linux-2023]
 # Tier: tier-2-core-security
 # Purpose: network connect() attribution to interactive-user processes
 # Source/authority: Enterprise SOC/IR minimum (former Tier 3)

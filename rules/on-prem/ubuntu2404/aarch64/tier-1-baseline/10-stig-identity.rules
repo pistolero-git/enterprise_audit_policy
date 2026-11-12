@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.1 | on-prem/ubuntu2404
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.16.2 | on-prem/ubuntu2404
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
 # Enterprise Linux Audit v0.16 | on-prem/ubuntu2404
 # Tier 1 — Ubuntu 24.04 audit-rule candidate

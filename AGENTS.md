@@ -3,7 +3,7 @@
 > **Purpose:** Portable handoff instructions for AI coding/review agents working on this Linux `auditd` policy project. Read this file, the current package `README.md`, and all three `docs/` guides before changing rules. Treat statements here as project decisions, **not** proof that an individual host or STIG requirement is compliant.
 >
 > **As of:** 2026-11-11  
-> **Current release:** `enterprise-audit-policy-v0.16.1.zip`  
+> **Current release:** `enterprise-audit-policy-v0.16.2.zip`  
 > **Release state:** **ENGINEERING CANDIDATE**. No OS/cloud/architecture profile is certified STIG-compliant, tested on a representative host, or production-approved.
 
 ## 1. Project objective and boundaries
@@ -22,10 +22,10 @@ Produce a comprehensive, maintainable enterprise **Linux Audit Policy** for on-p
 
 ## 2. Source of truth, layout, and inventory
 
-Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.16.1 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
+Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.16.2 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
 
 ```text
-enterprise-audit-policy-v0.16.1/
+enterprise-audit-policy-v0.16.2/
 ├── README.md
 ├── docs/
 │   ├── 01-IMPLEMENTATION-GUIDE.md
@@ -44,7 +44,7 @@ enterprise-audit-policy-v0.16.1/
 - **Never recursively install a profile directory**, because that would combine mutually exclusive x86_64 and ARM64 sets. Never combine different OS or cloud profiles.
 - **Count interpretation:** 25 rule files per implementation includes **comment-only candidates**: 276 of 2,000 files are comment-only (80 Tier 2 `29-system-config-integrity.rules`, 160 PHP2Shell CVE files, 28 on-prem cloud-host stubs, eight conditional MAC-policy files). File count does not indicate active sensor coverage.
 
-**Profile inventory in v0.16.1:**
+**Profile inventory in v0.16.2:**
 
 | Environment | OS directories |
 |---|---|
@@ -65,6 +65,21 @@ enterprise-audit-policy-v0.16.1/
 Minimum Security Requirement (MSR): **Tier 1 + Tier 2**. No unilateral reduction of the MSR. When a valid requirement cannot be supported, document the prerequisite, explicit N/A determination or approved **time-limited waiver**; applicable DoD STIG exceptions require the separate authorized compliance/AO process. Do not equate an enterprise waiver with a STIG waiver.
 
 Preserve intentional `-D` (rule reset), **`-f 2`** (fail-secure; may panic), and **`-e 2`** (immutable until reboot) unless the user explicitly authorizes a policy change. A local or homelab preference for `-f 1` is **not** permission to change all profiles. Account for existing vendor/EDR audit rules that `-D` may clear.
+
+## 3A. Audit failure mode (`-f 2`) — settled baseline policy; do not re-litigate
+
+**Decision:** The enterprise baseline intentionally uses **`-f 2`** (audit failure mode: panic) in **Tier 1**. This is an accepted *policy design choice with an availability consequence*, **not an overlooked misplaced rule, an unaddressed audit finding, or an automatic request to change it to `-f 1`**. The purpose is fail-secure handling of critical audit failures where the approved baseline requires it. This is distinct from a claim that the risk is suitable for every workload without an applicability/approval review.
+
+**Canonical location and order (v0.16.2):**
+
+- `tier-1-baseline/00-audit-foundation.rules` contains `-D`, `-b 8192`, and `--backlog_wait_time 60000`, plus a **comment** directing maintainers to the failure mode.
+- `tier-1-baseline/18-security-critical.rules` contains the single active **`-f 2`** directive for the selected profile, alongside `--loginuid-immutable`. **It is not a Tier 2 rule.**
+- `finalize/99-finalize.rules` contains `-e 2` and must be applied last. **`-f 2` and `-e 2` are different controls** and must never be conflated.
+- Do not move, duplicate, remove, downgrade, or silently override `-f 2` when doing routine cleanup, STIG mapping, OS-specific work, or responding to repeated third-party review comments. Keep its Tier 1 location and foundation cross-reference unless explicitly instructed to change the enterprise policy.
+
+**Risk and exception handling:** `-f 2` can trigger a kernel panic on critical audit failures, so host availability, backlog/queue pressure, and audit-path reliability are important deployment considerations. A proposed **`-f 1`** setting (log warnings rather than panic) for a homelab, appliance, cloud image, or availability-sensitive workload is **a deviation requiring explicit, scoped approval** under the existing waiver/exception process, not a default replacement. Do not infer that an enterprise waiver alone satisfies a separate DoD STIG/AO exception requirement. State the operational impact plainly; never call `-f 2` harmless or assume performance and failure behavior were host-tested.
+
+**Review rule:** If another reviewer repeatedly flags `-f 2` merely because it can panic, or because it is in `18-security-critical.rules` rather than `00-audit-foundation.rules`, mark it **“acknowledged, intentional Tier 1 baseline control; availability risk documented; no change authorized.”** Escalate only if the reviewer supplies a *new* specific STIG conflict, incorrect effective configuration, deployment-order defect, or an authorized waiver request. Check for exactly **one active `-f 2` per selected architecture profile**, with no unintended `-f` override later in the rule-loading order.
 
 ## 4. Tier 3 CVE naming and selection: settled decision
 
@@ -162,8 +177,16 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 - When asked to implement changes, state **exactly which active directives change**, which are merely comments/candidates, and which profiles are affected. Distinguish CVE threat sensors from CVE-independent SOC baseline requirements.
 - **Do not fabricate STIG mapping, source hashes, CVE associations, host test results, install paths, or release approval.** Cite precise sources and note uncertainty.
 - Keep the three existing docs and README in sync. **Release housekeeping completed in v0.16.1:** all 2,000 `.rules` files carry consistent v0.16.1 release metadata; 28 RHEL 9 ARM64 baseline headers are normalized; all three guide titles are current; duplicate commented preload candidates are removed; foundation comments reference the unchanged `-f 2` setting in `18-security-critical.rules`. Historical release-language remains in the README where it describes earlier work.
+- **v0.16.2 follow-up:** Standardized first-line headers in the 560 Tier 2 proposal and CVE files that retained prose first lines in v0.16.1. No active directives changed.
 - Previous review reports and CSV matrices may be provided as supporting evidence, but the most recent **verified ZIP** is canonical for actual active rules.
 - Validate created artifacts exist before giving download paths. Prefer small, transparent diffs and a concise validation summary. If you cannot prove something without a host, label it **offline candidate / requires host validation**, not approved.
+
+## 9A. v0.16.2 formatting-only status
+
+- The **560** previously nonstandard first-line headers (**80** inactive `29-system-config-integrity.rules` proposals and **480** CVE-specific files) now start with the same `# TARGET ARCHITECTURE:` header format as the other rule files. Existing CVE rationale, scope, inactive/active state, audit keys, and associated comments are preserved.
+- Release labels are updated to `v0.16.2` across all 2,000 rule files; the README and three guide titles are synchronized. **No active audit directives changed from v0.16.1.**
+- The established `-f 2` settled policy remains unchanged; exactly one active `-f 2` and one `-e 2` remain in each of the 80 variants.
+- This `AGENTS.md` remains a companion handoff outside the customer ZIP. The v0.16.2 ZIP still includes only README, three guides, and the rule tree.
 
 ## 10. Carry-forward work queue (not authorization to implement)
 
@@ -173,4 +196,4 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 4. **Continue offline product STIG/path completeness:** authoritative Ubuntu 22.04 V2R10, RHEL, AlmaLinux, Oracle Linux, SUSE, Amazon Linux and other supported OS profiles; package/image defaults and conditional guest agents. Do not falsely claim parity/compliance.
 5. **Maintain release provenance:** keep architecture/release headers, README and all three guide titles synchronized for every subsequent version. v0.16.1 fixed the previously reported housekeeping issues without changing active directives.
 
-**If another AI receives only this file:** ask for the latest package ZIP (currently v0.16.1) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.
+**If another AI receives only this file:** ask for the latest package ZIP (currently v0.16.2) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.
