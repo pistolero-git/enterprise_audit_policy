@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: x86_64 | v0.18 | aws/amazon-linux-2027
+# TARGET ARCHITECTURE: x86_64 | v0.19 | aws/amazon-linux-2027
 # Enterprise Linux Audit v0.16 | aws/amazon-linux-2027 | mandatory Tier 2 cloud host controls
 # Source context: AWS SSM Agent and EC2 cloud-init; CloudTrail required for API/SG/IAM
 # Host auditd cannot observe cloud-native API calls, security-group, IAM or NSG changes initiated remotely.

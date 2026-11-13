@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.18 | azure/almalinux9
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.19 | azure/almalinux9
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
 # Enterprise Linux Audit v0.16 | azure/almalinux9 | mandatory Tier 2 cloud host controls
 # Source context: Azure Linux Agent and cloud-init; Activity Log required for NSG/RBAC

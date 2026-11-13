@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.18 | on-prem/rhel8
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.19 | on-prem/rhel8
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
 # Enterprise Linux Audit v0.17  |  [on-prem/rhel8]
 # Tier: tier-1-baseline

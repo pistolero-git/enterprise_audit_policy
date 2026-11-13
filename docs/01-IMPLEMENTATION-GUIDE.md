@@ -1,4 +1,4 @@
-# 01 — Implementation Guide | v0.18
+# 01 — Implementation Guide | v0.19
 
 ## v0.17 — Targeted mandatory Tier 2 shell-startup monitoring
 
@@ -6,7 +6,7 @@
 
 **Deployment preflight:** Confirm that active paths exist as the expected file or directory on the selected OS/image before deploying. Package-file lists establish normal installed paths, not runtime guarantees. Debian does **not** have an automatically enabled `/etc/profile.d` watch; uncomment it only if the directory exists *and* `/etc/profile` sources it. If any applicable mandatory path is absent, remediate image prerequisites or obtain the correct applicability/exception decision; never silently disregard the rule.
 
-**Boundaries:** No broad `/etc` rule was activated. The commented loader leaf-path candidate cannot watch initial creation if the file is absent. For creation detection, explicitly evaluate a broad parent directory rule versus an EDR/Sysmon file-create source; record residual gap or an authorized waiver where applicable. SSH/sudoers watches may already exist in Tier 1; keep that provenance and only enable missing package-dependent watches when their paths exist. SysRq and user-home startup hunting remain separate/conditional. No host evidence exists for this release.
+**Current v0.19 boundary:** Active `/etc` directory auditing is present for file creation and modification. For host creation detection, rely on the approved native auditd parent-directory rule, assess filesystem/mount limitations, and use the waiver process if the required rule cannot be supported. SSH/sudoers watches may already exist in Tier 1; keep that provenance and only enable missing package-dependent watches when their paths exist. SysRq and user-home startup hunting remain separate/conditional. No host evidence exists for this release.
 
 
 ## v0.16.4 — Ubuntu 22.04 STIG coverage boundary
@@ -103,7 +103,7 @@ Resolve all `MISSING` paths: verify the exact package/service prerequisite and c
 
 ### 3. Stage mandatory tiers (do not install finalization during tests)
 
-Use a disposable VM/cloud instance for first testing. This procedure must be reviewed for the host's existing audit rules because **`00-audit-foundation.rules` includes `-D`**. Do not delete unrelated vendor/EDR audit rules without an approved change.
+Use a disposable VM/cloud instance for first testing. This procedure must be reviewed for the host's existing audit rules because **`00-audit-foundation.rules` includes `-D`**. Do not delete unrelated pre-existing audit rules without an approved change.
 
 ```bash
 # Example: local staging, after resolving preflight failures.
@@ -195,32 +195,25 @@ If package/image access is unavailable, retain conditional rules as **unverified
 
 ## v0.16 — Selecting CVE and hunting rules
 
-**Mandatory baseline (current v0.17):** Continue installing Tier 1 and all applicable Tier 2 rules. The `29-system-config-integrity.rules` file **now includes active, targeted shell-startup integrity watches** added in v0.17; in the original v0.16 release it contained only commented-out candidates. Its broader `/etc` watch **remains commented out** pending explicit approval, EPS analysis, and overlap review. Do not confuse the activated shell watches with approval for blanket `/etc` monitoring.
+**Mandatory baseline (v0.19):** Install Tier 1 and all applicable Tier 2 rules. `29-system-config-integrity.rules` retains v0.17 targeted shell-startup watches and now adds an active recursive `/etc` write/attribute watch; confirm overlap, volume, and availability risk. An authorized waiver is required if the mandatory monitoring cannot be supported.
 
 **CVE actions:** Confirm OS/package/kernel susceptibility using the relevant vendor advisory, then **patch or apply an approved mitigation**. If exposure persists or threat monitoring is required, select the matching `CVE-YYYY-NNNN.rules` from Tier 3; this **detects selected behavior only** and is not an effective substitute for patching. Do not copy all `CVE-*.rules` by wildcard. Copies of matching rules across two CVE files are intentional for individual selection, **not** authorization to load every copy. If multiple CVEs require identical rules, install one equivalent set and document both CVE requirements; account for overlapping keys and SPL filters. Rule keys such as `af_alg`, `splice_user` and `process_creation` must match the selected detection or be translated in SPL.
 
-**PHP2Shell caveat:** `CVE-2026-109618.rules` and `CVE-2026-109619.rules` contain commented candidate `exe=` filters. Select and uncomment a candidate only if the exact web/application-server executable is installed and relevant to the workload. No default enabled syscall rule exists for this CVE family because blanket service-account execution collection could be excessive. Where available, prefer EDR process lineage and web/PHP access/error logs. Both PHP CVE files implement the same process sensor; pick one when both apply.
+**PHP2Shell caveat:** `CVE-2026-109618.rules` and `CVE-2026-109619.rules` contain commented candidate `exe=` filters. Select and uncomment a candidate only if the exact web/application-server executable is installed and relevant to the workload. No default enabled syscall rule exists for this CVE family because blanket service-account execution collection could be excessive. These CVE-named files do not assume an additional endpoint product; their workload selectors must be explicitly configured for the applicable service. Both PHP CVE files implement the same process sensor; pick one when both apply.
 
 **Ordering:** Stage selected CVE files and any approved conditional rule edits **before** installing finalization with `-e 2`; later activation/retirement of rules on an immutable host normally requires reboot/redeployment of the audit ruleset. Do not treat a duplicate add failure as evidence the kernel chose a valid preferred rule. Check the effective rule set and audit keys during deployment.
 
 **CVE-independent hunting:** Monitoring every user's `.bashrc` or `.profile`, and sudoers read access, remains a targeted Tier 3/hunting decision, not a mandatory Tier 2 change. The SysRq procfs candidates in `29-system-config-integrity.rules` are also conditional until the kernel/image supports them.
 
-## v0.18: SSH/sudoers, loader preload, and SysRq applicability
+## v0.19: Auditd-only Tier 2 configuration integrity
 
-1. **OpenSSH package/path prerequisite:** For the Ubuntu 22.04/24.04/26.04 and RHEL 9 profiles, the Tier 2 `/etc/ssh` subtree watch is active. The OpenSSH client/server package must be installed and `/etc/ssh` must exist before rules are loaded. These conditions may not hold on all minimal/container images. If absent because SSH is genuinely not installed, record a justified N/A determination; if SSH is installed but the directory differs, adapt the profile with documented path evidence. Other OS profiles include a conditional SSH watch and must enable it when applicable.
-2. **Sudo policy prerequisite:** Preserve existing active Tier 1 watches. On profiles with conditional `/etc/sudoers` and `/etc/sudoers.d` watches, verify that sudo is installed and the paths exist, then enable targeted write/attribute rules, with x86 b32/native b64 matching the selected architecture. Do not declare coverage from merely commented candidate rules, and do not install sudo solely to make a watch load unless the platform independently requires sudo.
-3. **Loader preload:** The default loader preload configuration file may not exist. A leaf-path audit rule alone cannot detect its first creation when absent. Prefer specifically filtered Sysmon for Linux FileCreate Event 11 or another validated EDR file-creation source for initial creation and appropriate modification telemetry; validate filtering/ingestion separately. An unfiltered `/etc` recursive `perm=wa` watch is a more complete auditd collection option but is **not** approved for general mandatory Tier 2 because it broadens collection and can overlap existing watches. Neither an empty preload file nor a broad directory watch should be introduced unilaterally to force coverage.
-   **Example Sysmon for Linux filter fragment** (add inside the deployment's existing `EventFiltering` policy, not as a replacement for the whole Sysmon configuration):
+**Approved rule:** Every selected OS/architecture profile now contains active `-F dir=/etc -F perm=wa -k t2_etc_integrity` rules in `29-system-config-integrity.rules`. x86_64 uses both b64 and b32; ARM64 uses native b64. This does not rely on any non-auditd endpoint software.
 
-   ```xml
-   <FileCreate onmatch="include">
-     <TargetFilename condition="is">/etc/ld.so.preload</TargetFilename>
-   </FileCreate>
-   ```
+1. **Loader-preload first creation:** A single-file watch cannot cover a file that is absent at rule load. The recursive `/etc` watch captures writes, creations, renames, and metadata changes under the directory when supported by the kernel/filesystem. Investigate `PATH` records for the precise target, including the loader preload configuration. This may not capture modifications in separate mount points or nonstandard loader paths; assess those separately.
+2. **SSH and sudoers:** This new baseline provides auditd write/attribute visibility to `/etc/ssh`, `/etc/sudoers`, and `/etc/sudoers.d`, including file creation, *whether or not* optional packages are present at rule load time. Pre-existing targeted rules remain, even when they overlap, to preserve source mappings and audit keys; only enable additional commented exact-path watches when a path exists and has a documented need.
+3. **Magic SysRq:** Persistent changes in `/etc/sysctl.conf` and `/etc/sysctl.d/` fall under the new `/etc` watch. They do **not** prove detection of a direct privileged write to `/proc/sysrq-trigger` or `/proc/sys/kernel/sysrq`. Procfs candidates remain commented pending verified kernel acceptance. An absence of SysRq events cannot be counted as successful monitoring; document that runtime limitation and seek an approved waiver if it is mandatory for the host.
+4. **Collection cost:** A recursive watch is wider than the targeted rules it supplements. Before customer rollout, confirm the expected event rate and loss/backlog risk in the organization's workload acceptance process. Without host access these measurements cannot be certified. Audit failure mode remains `-f 2` (kernel panic on critical audit failures), and any inability to support Tier 2 must use an authorized, scoped exception rather than deleting it silently.
+5. **Audit event transport:** Preserve native `SYSCALL`, `PATH`, `CWD`, `EXECVE`, and `PROCTITLE` records, event serial IDs and audit keys, and use the `PATH` records to filter `/etc/ld.so.preload`, sudoers, SSH and SysRq configuration changes in Splunk. This is **auditd telemetry**, not a requirement for an additional host monitoring agent.
+6. **Cloud boundary:** Local auditd cannot provide an authoritative record of remote cloud API calls. Cloud-host API/security-group/IAM monitoring requirements must be handled at the cloud control plane, separately from host auditd.
 
-   This targets FileCreate (Event 11); ensure the deployed Linux Sysmon build supports it, and use other file-modification telemetry where overwrites/edits are not captured. Validate Splunk ingestion and filtering as a separate source requirement. Do not represent this as an auditd `.rules` directive.
-
-4. **Magic SysRq:** Check whether the kernel exposes `/proc/sysrq-trigger` and `/proc/sys/kernel/sysrq`. Kernel documentation distinguishes direct privileged trigger writes from the keyboard SysRq enable setting. Candidate procfs audit rules remain commented due to kernel/path acceptance and performance uncertainty. Prefer kernel/journald evidence and approved kernel configuration monitoring when available; this is not equivalent to universal auditd trigger attribution.
-5. **Exception handling:** Where applicable security objectives cannot be met by the chosen default profile, document source/package applicability and use the existing waiver/exception process; no blanket compliance claim is made.
-
-Sources: https://man7.org/linux/man-pages/man8/auditctl.8.html ; https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/securing_networks/ ; https://wiki.debian.org/SSH ; https://github.com/microsoft/Sysmon-Linux ; https://www.kernel.org/doc/html/v6.10/admin-guide/sysrq.html
+**Linux Audit documentation:** https://man7.org/linux/man-pages/man8/auditctl.8.html ; https://github.com/linux-audit/audit-userspace ; **SysRq kernel documentation:** https://www.kernel.org/doc/html/latest/admin-guide/sysrq.html

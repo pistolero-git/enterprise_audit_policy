@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.18 | on-prem/rocky8
-# Enterprise Linux Audit v0.18  |  [on-prem/rocky8]
+# TARGET ARCHITECTURE: x86_64 | v0.19 | on-prem/rocky8
+# Enterprise Linux Audit v0.19  |  [on-prem/rocky8]
 # Tier: tier-1-baseline
 # Purpose: permission, deletion, module, time, and failed-file-access audit
 # Source/authority: DISA applicable product STIG/SRG objectives; linux-audit audit-userspace 30-stig.rules

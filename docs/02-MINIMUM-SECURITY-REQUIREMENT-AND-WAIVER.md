@@ -1,4 +1,4 @@
-# 02 — Minimum Security Requirement and Waiver | v0.18
+# 02 — Minimum Security Requirement and Waiver | v0.19
 
 ## v0.17 — CVE-independent Tier 2 shell-startup baseline
 
@@ -34,7 +34,7 @@ An approved waiver is required when an applicable Tier 1/Tier 2 capability canno
 
 If the requirement is derived from a DoD STIG/SRG, the **AO/compliance exception process** (including POA&M/accepted-risk as applicable) is separate from, and not replaced by, an enterprise security waiver. Both authorities must be satisfied when both apply. An unexpected cost increase or alert volume alone is not authorization to disable mandated telemetry.
 
-**Fail-secure policy:** `-f 2` is retained in v0.14. Depending on the audit failure mode it can panic the kernel. It is not appropriate to globally replace it with `-f 1` without the authorized risk/compliance decision. **Immutability:** `-e 2` prevents further rule changes until reboot. **Rule reset:** `-D` affects existing vendor/EDR rules. All require predeployment risk review.
+**Fail-secure policy:** `-f 2` is retained in v0.14. Depending on the audit failure mode it can panic the kernel. It is not appropriate to globally replace it with `-f 1` without the authorized risk/compliance decision. **Immutability:** `-e 2` prevents further rule changes until reboot. **Rule reset:** `-D` affects existing audit rules. All require predeployment risk review.
 
 ## Rollout and stop criteria
 
@@ -82,10 +82,10 @@ The default package keeps `-f 2` and `-e 2` unchanged. Requests for `-f 1` on a 
 
 A Tier 3 CVE file is a *detection option*, not a patch, workaround, or compensating control unless separately assessed and accepted by the security authority. For each affected asset record its patch/mitigation status, CVE(s), applicable Tier 3 file, date/owner, detection key or Splunk search dependencies, and activation/retirement decision. If multiple CVEs share rules, recording both CVEs with one approved sensor is acceptable; forcing duplicate rule installation is not required. The proposed Tier 2 `/etc` directory-integrity watch has **not** been activated or promoted into the mandatory baseline. Its future adoption requires an approved scope/performance decision.
 
-## v0.18 — Security-configuration monitoring decisions
+## v0.19 — Security-configuration monitoring decisions
 
 - OpenSSH configuration modifications are a CVE-independent mandatory Tier 2 objective **where OpenSSH is installed**. An absent package may be N/A with evidence; an installed package with an inactive watch is a coverage gap until remediated or formally excepted.
 - Sudoers modification monitoring remains mandatory **where sudo is installed and applicable**. Do not claim conditional/commented watches satisfy this objective.
-- Preload-file initial creation is not guaranteed by the baseline auditd leaf-watch approach. A separately validated EDR/Sysmon file-creation source is the preferred complement; missing required visibility must be assessed under the normal waiver/exception process. An unapproved unfiltered `/etc` auditd watch is not a substitute for documented engineering review. Existing cloud-host `auid=unset,euid=0` `/etc` watches cover only that filtered population.
-- SysRq candidate watches remain conditional; do not claim that `kernel.sysrq` configuration monitoring alone detects direct privileged writes to `/proc/sysrq-trigger`.
+- v0.19 makes native auditd `/etc` subtree write/attribute auditing mandatory in Tier 2 for creation and modification of security configuration (including loader preload, SSH and sudoers), regardless of whether optional leaf files exist. No supplementary endpoint agent is an accepted prerequisite. Because this broadens audit traffic under a settled Tier 1 `-f 2` failure mode, capacity/backlog/loss review and scoped waiver handling are required where unsupported.
+- SysRq procfs candidates remain conditional: `auditd` monitoring of `/etc` sysctl files covers persistent configuration changes but does not prove attribution of direct privileged writes to `/proc/sysrq-trigger`. Document inability to enable or verify those kernel-specific procfs rules rather than asserting complete coverage.
 - Tier 1 audit failure policy `-f 2` and Tier Finalize immutability `-e 2` remain unchanged.

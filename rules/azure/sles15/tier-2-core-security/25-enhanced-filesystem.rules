@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.18 | azure/sles15
-# Enterprise Linux Audit v0.18  |  [azure/sles15]
+# TARGET ARCHITECTURE: x86_64 | v0.19 | azure/sles15
+# Enterprise Linux Audit v0.19  |  [azure/sles15]
 # Tier: tier-2-core-security
 # Purpose: direct-root session permission/file destruction behavior
 # Source/authority: Enterprise SOC/IR minimum (former Tier 3)

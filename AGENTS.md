@@ -1,37 +1,47 @@
-# AGENTS.md — Enterprise Linux Audit Policy v0.18
+# AGENTS.md — Enterprise Linux Audit Policy v0.19
 
-**Current release:** v0.18 (engineering candidate). The current source of truth is the corresponding packaged rules and three guides. Historical release references below are milestones, not current version claims.
+**Current release:** v0.19 (engineering candidate). The current source of truth is the corresponding packaged rules and three guides. Historical release references below are milestones, not current version claims.
 
-## v0.18 — Settled Tier 2 monitoring decisions
+## v0.18 historical SSH decisions and v0.19 configuration-monitoring update
 
-- **CVE-independent OpenSSH configuration changes:** Tier 2 monitoring is required when OpenSSH is installed. Active `/etc/ssh` subtree watches now exist in Ubuntu 22.04/24.04/26.04 and RHEL 9 profiles (32 architecture variants); other profiles remain conditional. Do not claim active detection from commented candidates. Preflight package/path prerequisites before loading; if SSH genuinely absent, document N/A.
-- **Sudoers:** existing active watches remain unchanged in 32 variants. For other profiles require `sudo` applicability assessment and conditional watch activation when installed. Do not promote potentially nonexistent paths by default.
-- **Loader preload first creation:** A missing-file leaf watch cannot detect initial creation. Do not approve broad `dir=/etc` auditing without a separate volume/overlap decision. Prefer verified filtered Sysmon-for-Linux FileCreate Event 11 or EDR file telemetry; if neither exists, record a coverage gap, not an invented success.
+- **OpenSSH:** v0.18 activated targeted `/etc/ssh` subtree watches in Ubuntu and RHEL 9 profiles. v0.19 now adds broad `/etc` auditd coverage across all 80 variants, including SSH config changes where the directory exists or is newly created. Keep existing targeted selectors for traceability; some legacy exact-path rules remain conditional.
+- **Sudoers:** existing Tier 1/2 sudoers watches remain unchanged. v0.19 `/etc` directory auditing now covers sudoers creation/modification when sudo is installed even if target files were absent at rule load; commented exact-path candidates do not count as active.
+- **Loader preload first creation:** v0.19 approves and activates the recursive `dir=/etc` watch for this missing-file scenario. No additional endpoint collector is assumed. Flag the broad-watch volume/overlap risk without silently deactivating it.
 - **Magic SysRq:** the `kernel.sysrq` sysctl affects keyboard use; privileged writes to `/proc/sysrq-trigger` remain available. Procfs candidates stay disabled until target-kernel audit acceptance is confirmed. Do not conflate sysctl configuration with trigger attribution.
 - **Settled `-f 2`:** remains the one mandatory Tier 1 fail-secure directive in `18-security-critical.rules` per profile; do not change except via approved waiver. Final `-e 2` remains separate.
-- **Change scope:** v0.18 adds only 48 SSH directives across 32 profiles; the rest of active rules, tier-3 CVE files, and tier governance remain unchanged. The v0.17 proposal file does not gain new active rules; filtered `dir=/etc` cloud-host collection was already present in v0.17 and should not be confused with unfiltered baseline coverage.
+- **Current change scope:** v0.19 adds 120 `t2_etc_integrity` directives in all 80 variants. The 48 SSH additions occurred in v0.18. No previous active rule directives were removed or modified. Existing cloud-root-scoped `/etc` rules remain separate.
 - **Validation status:** static only; no production/host certification. Preserve exact paths, architecture and applicability conditions.
 
 ---
 
 # AGENTS.md — Enterprise Linux Audit Policy
 
+## v0.19 approved design decision — auditd is the required host source
+
+**Settled requirement:** Tier 1/2 Linux host monitoring must stand on `auditd`. Do not introduce a supplementary host sensor as a mandatory dependency or suggested workaround for baseline gaps. Auditd is the source; Splunk may ingest its events. External cloud provider control-plane records are a distinct technical boundary, not host auditd capabilities.
+
+**Approved Tier 2 addition:** Every variant now actively watches writes and attributes recursively under `/etc` using `-F dir=/etc -F perm=wa -k t2_etc_integrity` (x86_64 b64+b32, ARM64 b64); 120 active directives in 80 variants. This captures initial creation and modification of loader preload files and changes to SSH/sudoers configurations under `/etc` without assuming optional leaf files exist. Existing targeted watches and audit keys are retained. **This is a broad, intentional policy decision, not an unapproved candidate.** Measure/assess volume, overlap and backlog before rollout; maintain `-f 2` and use a formal waiver when unsupported. Do not reopen based solely on broadness without new evidence of a concrete issue.
+
+**Magic SysRq:** `/etc/sysctl*` configuration modifications fall under the `/etc` rule. Direct writes to `/proc/sysrq-trigger` are not proven by it, and procfs candidates stay commented until kernel-specific acceptance testing. This is a known auditd-only limitation, not permission to demand an auxiliary endpoint agent.
+
+**Prior false-positive closure:** The former commented loader *leaf* candidate in `29-system-config-integrity.rules` is superseded/removed. The actual active rule is **directory-wide**; do not count mentions of a filename in prose as duplicate active rules. The old v0.16.3 single-commented-candidate finding is historical, not the current implementation.
+
 > **Purpose:** Portable handoff instructions for AI coding/review agents working on this Linux `auditd` policy project. Read this file, the current package `README.md`, and all three `docs/` guides before changing rules. Treat statements here as project decisions, **not** proof that an individual host or STIG requirement is compliant.
 >
 > **As of:** 2026-11-12  
-> **Current release:** `enterprise-audit-policy-v0.17.zip`  
+> **Current release:** `enterprise-audit-policy-v0.19.zip`  
 > **Release state:** **ENGINEERING CANDIDATE**. No OS/cloud/architecture profile is certified STIG-compliant, tested on a representative host, or production-approved.
 
 ## Ubuntu 22.04 V2R10 reconciliation status (v0.16.4)
 
-All 49 published audit-rule-related V-IDs are mapped to active directives in the eight Ubuntu 22.04 implementations. The exact 49-row table is in `docs/03-RULE-SOURCING-AND-MAINTENANCE.md`. This **closes the missing audit-rule-ID inventory gap**, but **does not** close official DISA ZIP/XCCDF hash verification, conditional image path/package prerequisites, kernel loading, or actual STIG compliance. Do not reopen the "missing 49 audit-rule IDs" issue without naming a specific V-ID and demonstrating a missing or semantically invalid *active* directive. Continue reporting legitimate unverified deployment and official-source checks. Tier 2 `29-system-config-integrity.rules` now has narrowly scoped **active** system shell startup watches; its broad `/etc` and loader candidate watches remain disabled. Do not promote the broad watch without an explicit security/performance decision.
+All 49 published audit-rule-related V-IDs are mapped to active directives in the eight Ubuntu 22.04 implementations. The exact 49-row table is in `docs/03-RULE-SOURCING-AND-MAINTENANCE.md`. This **closes the missing audit-rule-ID inventory gap**, but **does not** close official DISA ZIP/XCCDF hash verification, conditional image path/package prerequisites, kernel loading, or actual STIG compliance. Do not reopen the "missing 49 audit-rule IDs" issue without naming a specific V-ID and demonstrating a missing or semantically invalid *active* directive. Continue reporting legitimate unverified deployment and official-source checks. Tier 2 `29-system-config-integrity.rules` has active system shell startup watches and a **v0.19 approved active recursive `/etc` integrity watch**; the obsolete loader leaf candidate was removed.
 
 
-## v0.17 Tier 2 integrity policy decision — active targeted shell watches
+## Historical v0.17 Tier 2 integrity decision — targeted shell watches
 
-**Decision:** CVE-independent modifications to system shell initialization are **mandatory Tier 2**; the broad `/etc`-directory proposal remains *inactive*. Each implementation now contains active watches under `29-system-config-integrity.rules` for `/etc/profile`, its platform Bash initialization path (`/etc/bashrc` on RHEL-family/Amazon, `/etc/bash.bashrc` on Ubuntu/Debian/SLES) and `/etc/profile.d` for non-Debian profiles. Debian's `profile.d` watch remains commented because base-files does not guarantee it. No per-user home dotfile watches were activated. Exactly **348 active rules added** across the 80 variants; otherwise active directives unchanged from v0.16.4.
+**Historical decision at v0.17:** CVE-independent modifications to system shell initialization were mandatory Tier 2; the broad `/etc` proposal was then inactive and was activated in v0.19. Each implementation now contains active watches under `29-system-config-integrity.rules` for `/etc/profile`, its platform Bash initialization path (`/etc/bashrc` on RHEL-family/Amazon, `/etc/bash.bashrc` on Ubuntu/Debian/SLES) and `/etc/profile.d` for non-Debian profiles. Debian's `profile.d` watch remains commented because base-files does not guarantee it. No per-user home dotfile watches were activated. Exactly **348 active rules added** across the 80 variants; otherwise active directives unchanged from v0.16.4.
 
-**Do not re-open settled issues:** `/etc/ld.so.preload` is intentionally a single commented candidate; it cannot observe creation of a missing file. Neither a broad `/etc` watch nor SysRq procfs watches were activated. SSH/sudoers watches are already active in some Tier 1 profiles, but others still need package-specific validation. Never claim all these objectives are complete merely because the shell-init watches are active. The settled `-f 2` placement/policy and separate CVE-named Tier 3 files remain unchanged.
+**Historical v0.17 decision:** the loader leaf watch was a single commented candidate and no broad `/etc` watch was activated *at that release*; v0.19 supersedes this with active broad directory coverage. SysRq procfs candidates remain inactive. SSH/sudoers watches are already active in some Tier 1 profiles, but others still need package-specific validation. Never claim all these objectives are complete merely because the shell-init watches are active. The settled `-f 2` placement/policy and separate CVE-named Tier 3 files remain unchanged.
 
 **Path evidence:** Default directory or binary paths are supported by published vendor docs/package manifests, *not* proven present on every golden/minimal image. `path=` and `dir=` watches require an existing target; check package/image inventories and handle N/A/waiver as prescribed. No host logs or kernel-loading evidence are available.
 
@@ -51,7 +61,7 @@ Produce a comprehensive, maintainable enterprise **Linux Audit Policy** for on-p
 
 ## 2. Source of truth, layout, and inventory
 
-Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.17 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
+Use the **latest actual ZIP contents**, not an earlier assistant description, as source of truth. For v0.19 the ZIP was inspected: it passes `ZipFile.testzip()`, contains **2,000 `.rules` files** and **4 non-rule files** (README + three guides). It has **40 OS/hosting combinations**, **80 architecture-selectable implementations** and **25 `.rules` files per implementation**.
 
 ```text
 enterprise-audit-policy-v0.17/
@@ -93,7 +103,7 @@ enterprise-audit-policy-v0.17/
 
 Minimum Security Requirement (MSR): **Tier 1 + Tier 2**. No unilateral reduction of the MSR. When a valid requirement cannot be supported, document the prerequisite, explicit N/A determination or approved **time-limited waiver**; applicable DoD STIG exceptions require the separate authorized compliance/AO process. Do not equate an enterprise waiver with a STIG waiver.
 
-Preserve intentional `-D` (rule reset), **`-f 2`** (fail-secure; may panic), and **`-e 2`** (immutable until reboot) unless the user explicitly authorizes a policy change. A local or homelab preference for `-f 1` is **not** permission to change all profiles. Account for existing vendor/EDR audit rules that `-D` may clear.
+Preserve intentional `-D` (rule reset), **`-f 2`** (fail-secure; may panic), and **`-e 2`** (immutable until reboot) unless the user explicitly authorizes a policy change. A local or homelab preference for `-f 1` is **not** permission to change all profiles. Account for existing local or vendor audit rules that `-D` may clear.
 
 ## 3A. Audit failure mode (`-f 2`) — settled baseline policy; do not re-litigate
 
@@ -138,8 +148,8 @@ The general `30-exploitation.rules` remains Tier 3 and **is not renamed after a 
 | Capability | Policy decision / current status |
 |---|---|
 | User and root process execution | **Keep in Tier 2**; existing `execve`/`execveat` rules |
-| Broad `auid=unset` / non-root service-account execution | **Not automatically Tier 2**; specifically identified through PHP2Shell; use **scoped Tier 3** or EDR/Sysmon when justified |
-| `/etc/ld.so.preload` and system-wide shell config modification | **Tier 2 objective**; v0.17 activates system shell watches; absent loader-file initial creation remains an unresolved gap |
+| Broad `auid=unset` / non-root service-account execution | **Not automatically Tier 2**; specifically identified through PHP2Shell; use **scoped Tier 3** if independently justified |
+| `/etc/ld.so.preload` and system-wide shell config modification | **Tier 2 objective**; v0.17 activated shell watches and v0.19 adds active `/etc` subtree monitoring for missing-loader-file creation |
 | SSH, sudoers, sensitive security config modification | Tier 1/2 objective; check existing coverage and avoid needless duplicates |
 | Magic SysRq modifications | Tier 2 **candidate**; kernel/path applicability unverified |
 | All users' `.bashrc`/`.profile` modifications | Tier 3 / targeted hunt, not fleet-wide baseline |
@@ -147,17 +157,17 @@ The general `30-exploitation.rules` remains Tier 3 and **is not renamed after a 
 | CVE-specific socket/syscall sequences, service shell behavior | Tier 3 |
 | Audit event parsing and field correlation in Splunk | Mandatory **integration requirement**, not necessarily another kernel audit rule |
 
-`29-system-config-integrity.rules` was added in v0.16 as a **commented, inactive Tier 2 proposal** for `dir=/etc perm=wa`, with conditional SysRq and narrower leaf-path alternatives. In **v0.17, only targeted system shell startup watches were activated**. The broad `/etc`, SysRq and loader leaf-path candidates **remain inactive**; do not uncomment those without explicit user approval and applicability/volume assessment. The duplicated **commented** `/etc/ld.so.preload` candidate block was removed in v0.16.1; the remaining candidate is still inactive.
+`29-system-config-integrity.rules` originated in v0.16 as an inactive proposal, with conditional SysRq and leaf-path alternatives. In v0.17, only shell-startup watches were active. **v0.19 has approved and activated the broad `/etc` watch in every variant**; SysRq procfs candidates stay inactive, and the loader leaf candidate was removed as redundant. The duplicated **commented** `/etc/ld.so.preload` candidate block was removed in v0.16.1; the remaining candidate was removed in v0.19 after activating the broad parent watch.
 
 ### Resolved review finding — repeated `/etc/ld.so.preload` text is NOT duplicate collection
 
 **Settled disposition (v0.16.3):** The old finding that `29-system-config-integrity.rules` contained four references to the loader preload file was **a comment-text false positive**, not duplicate rules. In v0.16.2 the path appeared on four lines (explanation plus one `# -a ...` candidate), with **zero active directives**. In v0.16.3 all 80 copies were cleaned up so that the literal path appears **exactly once**, in the single commented-out leaf-path proposal. The broad directory integrity candidate is also commented out. This cleanup **did not enable any rules**.
 
-**Required review method:** Strip or ignore lines beginning with `#` when counting *active* audit directives; examine commented `# -a` candidates separately. Never infer duplication from a substring/reference count, which includes prose. Only reopen a duplication issue if (a) more than one equivalent active directive is actually present, (b) an unapproved candidate has been activated, or (c) another concrete functional defect is demonstrated. Otherwise report **“Resolved, explanatory comments consolidated; one inactive candidate; zero active directives; no action required.”**
+**Required review method:** Strip or ignore lines beginning with `#` when counting active directives and examine candidates separately. Do not infer duplication from a substring count. For v0.19 `29-system-config-integrity.rules`, expect the active `t2_etc_integrity` directory rule (two ABI rules on x86_64, one on ARM64), in addition to the previously active targeted shell rules. No preload leaf rule is active.
 
-**Separate open decision:** Whether to activate **broad** Tier 2 `/etc` integrity monitoring remains unresolved and requires explicit approval/volume review; targeted shell file watches were activated in v0.17; do not conflate that coverage decision with the resolved duplicate-text finding. Broad `/etc` collection is not automatically preferable to targeted watches.
+**Current v0.19 decision:** broad Tier 2 `/etc` monitoring is explicitly approved and active, with its performance/availability risk documented. The prior false-positive on duplicated loader candidate comments remains closed; do not confuse it with the new actual directory rule.
 
-**Next substantive work:** evaluate the remaining unaddressed Tier 2 loader creation, SSH/sudoers and SysRq gaps, then Tier 3 hunting candidates individually. Explain choices and collection-cost tradeoffs before altering the mandatory baseline.
+**Next substantive work:** evaluate image-specific path assumptions for existing STIG watches, workload performance/volume for the approved `/etc` rule, and conditional SysRq procfs acceptance; then Tier 3 hunt candidates separately.
 
 ## 6. OS, architecture and cloud specifics
 
@@ -165,13 +175,13 @@ The general `30-exploitation.rules` remains Tier 3 and **is not renamed after a 
 - **Ubuntu 24.04:** user-supplied V1R7 extraction: **64 source directives represented** on x86_64; does not prove live loading, exact independent current-STIG compliance or ARM64 equivalence. Some watch paths require prerequisites, notably `/var/log/sudo.log`; `/sbin/unix_update` may require checking `/usr`-merge alias.
 - **Ubuntu 26.04:** inherits Ubuntu 24.04 **engineering objectives**, not 24.04 STIG authority; uses `/usr/sbin/apparmor_parser`. Check released package/image paths and new STIG applicability separately.
 - **RHEL 9:** older local V2R10 reference included **81 directives**, not an independent comparison with the currently authoritative DISA publication.
-- **Debian 12/13:** coverage expanded but **does not have full active Ubuntu rule-family parity**; optional `sudo`, SSH, PAM, `acl`, AppArmor, cron, and log-file paths are conditional. For **Proxmox VE**, `/etc/pve` is `pmxcfs`/FUSE: do not presume normal audit file watches establish its configuration history. Complement with PVE API/task/cluster logs.
+- **Debian 12/13:** coverage expanded but **does not have full active Ubuntu rule-family parity**; optional `sudo`, SSH, PAM, `acl`, AppArmor, cron, and log-file paths are conditional. For **Proxmox VE**, `/etc/pve` is `pmxcfs`/FUSE: do not presume normal audit file watches establish its configuration history. Proxmox cluster FUSE activity is outside the scope of ordinary local auditd file-watch guarantees; document the gap.
 - **Amazon Linux 2023 / 2027:** distinct AWS profiles. AL2027 was a **preview-only candidate** at the previous release review; verify current support/GA status before subsequent claims. Standard/minimal AMIs have different installed packages and SSM availability.
 - **SELinux vs AppArmor:** use the applicable OS-native MAC implementation. Policy-modification auditing is separate from MAC enforcement and from AVC/denial record ingestion.
 - **Architecture:** x86_64 uses b64 and where appropriate b32 compatibility ABI; ARM64 uses native b64 names, including `*at` variants where legacy syscalls are absent. Correct syscall name mapping does **not** prove identical filter semantics or STIG equivalence.
 - **Cloud guests:** use provider **and OS** profile; generic noninteractive root activity does not replace exact SSM/Azure/Linux Agent/Google guest-agent watches. Those path-dependent rules are often commented pending installed-package/image verification.
 - **Cloud control plane:** mandatory companion sources: **AWS CloudTrail**, **Azure Activity Log**, **GCP Cloud Audit Logs** for API, role/IAM, security-group/NSG/firewall and resource modifications; network flow logs when applicable. `auditd` cannot reconstruct remote provider API changes reliably. Cloud CLI execution != API audit trail.
-- **Other sources:** prefer EDR/Sysmon for Linux for rich parent/child process context, journald/auth logs for service/authentication, and service/application logs for web or PHP behaviors when they are the better telemetry source.
+- **Host-source policy:** auditd is mandatory and self-contained for required host monitoring. Do not specify a separate endpoint agent as a baseline dependency. Some cloud/API operations are technically outside local host auditd.
 
 ## 7. Offline verification — required when making a change
 
@@ -221,7 +231,7 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 ## 9B. v0.16.4 resolved recurring loader-path review comment
 
 - In the 80 copies of `29-system-config-integrity.rules`, consolidate the prose references so `/etc/ld.so.preload` appears on **one commented candidate line** only.
-- **Zero active rules were added, removed or changed** compared with v0.16.2; the candidate remains inactive. Do not file this as an unresolved duplicate based on raw text matches.
+- **Historical v0.16.3:** Zero active rules were added, removed or changed compared with v0.16.2; the candidate was inactive at that release. Do not file this as an unresolved duplicate based on raw text matches.
 - The approved `-f 2` Tier 1 control, CVE rules, all architecture profiles, and mandatory baseline remain unchanged.
 
 ## 9A. v0.16.2 formatting-only status
@@ -233,10 +243,10 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 
 ## 10. Carry-forward work queue (not authorization to implement)
 
-1. **Review remaining Tier 2 configuration-integrity gaps:** shell startup `/etc/profile`, Bash system-wide configuration and non-Debian `profile.d` now have active watches. Independently assess the initial-creation limitation of absent `/etc/ld.so.preload`, incomplete SSH/sudoers coverage on package-dependent profiles, and the conditional SysRq candidate. Broad `/etc` monitoring remains *unapproved*.
+1. **Validate v0.19 Tier 2 directory integrity:** active `/etc` recursion observes security configuration creation/modification; review file/mount coverage, overlap, EPS/backlog and the still-conditional SysRq procfs rules. Keep `.rules` architecture-specific.
 2. **Review Tier 3 non-CVE hunts separately:** user shell initialization modifications, sudoers read activity, service-scoped investigations. Never auto-promote to mandatory baseline simply because Splunk has an analytic.
 3. **Review CVE file applicability and overlap:** verify vulnerability/CVE references and supported kernel/OS assumptions; consider shared collection keys and whether inactive PHP2Shell selectors actually support the intended correlation. Preserve distinct CVE filenames.
 4. **Continue offline product STIG/path completeness:** authoritative Ubuntu 22.04 V2R10, RHEL, AlmaLinux, Oracle Linux, SUSE, Amazon Linux and other supported OS profiles; package/image defaults and conditional guest agents. Do not falsely claim parity/compliance.
 5. **Maintain release provenance:** keep architecture/release headers, README and all three guide titles synchronized for every subsequent version. v0.16.1 fixed the previously reported housekeeping issues without changing active directives.
 
-**If another AI receives only this file:** ask for the latest package ZIP (currently v0.18) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.
+**If another AI receives only this file:** ask for the latest package ZIP (currently v0.19) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.

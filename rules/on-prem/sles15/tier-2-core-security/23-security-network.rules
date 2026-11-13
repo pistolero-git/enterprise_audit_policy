@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.18 | on-prem/sles15
-# Enterprise Linux Audit v0.18  |  [on-prem/sles15]
+# TARGET ARCHITECTURE: x86_64 | v0.19 | on-prem/sles15
+# Enterprise Linux Audit v0.19  |  [on-prem/sles15]
 # Tier: tier-2-core-security
 # Purpose: hostname and local resolver changes
 # Source/authority: Enterprise SOC/IR minimum

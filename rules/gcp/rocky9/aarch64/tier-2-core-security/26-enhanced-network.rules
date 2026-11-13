@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.18 | gcp/rocky9
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.19 | gcp/rocky9
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
 # Enterprise Linux Audit v0.17  |  [gcp/rocky9]
 # Tier: tier-2-core-security

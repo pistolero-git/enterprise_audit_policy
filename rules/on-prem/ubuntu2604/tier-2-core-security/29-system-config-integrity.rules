@@ -1,18 +1,16 @@
-# TARGET ARCHITECTURE: x86_64 | v0.18 | on-prem/ubuntu2604
-# Enterprise Linux Audit Policy v0.18 | on-prem/ubuntu2604 | Tier 2 — targeted shell-startup watches active; broad /etc proposal remains inactive
-# Source: enterprise SOC/IR; Unix shell vendor documentation and audited installed path prerequisites.
-# These watch system-level startup file changes (writes and attributes only), not user home dotfiles or reads.
-# /etc/profile and the distro Bash startup file are standard installed-package paths, but must resolve on the selected image.
-# Do not claim auditd file-path watches detect creation of previously absent single files.
-# Objective: persistent/system security config changes irrespective of CVE association.
-# /etc generally exists, but individual security configuration files may not.
-# The proposed directory rule would cover creation and modification under /etc,
-# including loader settings, system shell profiles, SSH and sudoers if present.
-# Not enabled by default: broad /etc collection needs tier-2 promotion approval,
-# duplicate/overlap review and volume justification for busy and cloud hosts.
-# Audits writes/attribute changes, NOT file reads; covers both ABI variants.
-# # -a always,exit -F dir=/etc -F perm=wa -k t2_etc_integrity
-
+# TARGET ARCHITECTURE: x86_64 | v0.19 | on-prem/ubuntu2604
+# Enterprise Linux Audit Policy v0.19 | Tier 2 — mandatory auditd-only configuration integrity
+# Source: enterprise SOC/IR CVE-independent system integrity requirement; Linux Audit auditctl manual.
+# ACTIVE recursive write/attribute monitoring for /etc; covers existing files and newly created names.
+# Includes loader preload creation, OpenSSH/sudoers (if installed), system profiles and sysctl configuration.
+# No auid/uid filter: this includes both interactive users and services with auid=unset.
+# Monitor only wa, not reads; filesystem nested mounts/bind mounts require separate suitability assessment.
+# This expands volume beyond v0.18: evaluate audit event rate, audit lost/backlog and overlap with existing rules.
+# Tier 1 -f 2 stays mandatory; a platform unable to support Tier 2 requires documented waiver.
+# x86_64: native b64 plus compat b32; ARM64: native b64 only.
+# v0.19 ACTIVE — auditd-only recursive directory integrity:
+-a always,exit -F arch=b64 -F dir=/etc -F perm=wa -k t2_etc_integrity
+-a always,exit -F arch=b32 -F dir=/etc -F perm=wa -k t2_etc_integrity
 
 # v0.17 ACTIVE: CVE-independent system-wide shell startup integrity.
 -a always,exit -F arch=b64 -F path=/etc/profile -F perm=wa -k t2_shell_init
@@ -24,15 +22,12 @@
 # These rule keys are distinct from STIG watches; do not duplicate existing profile rules in other files.
 # /etc/profile.d is a documented default family directory; customized/minimal images still need a path preflight.
 
-# CVE-independent Magic SysRq control; conditional to kernel/sysctl support.
-# No general unfiltered /etc audit rule: cloud profiles may already have a scoped auid=unset/euid=0 /etc rule; sysctl procfs actions require independent, applicable telemetry.
-# These procfs candidates require kernel/filesystem-specific audit acceptance checks; remain inactive:
+# Magic SysRq: persistent /etc/sysctl* configuration writes are monitored above,
+# but privileged writes to procfs trigger/control paths are a DIFFERENT behavior.
+# Kernel-specific procfs watch acceptance is unverified offline; do not activate universally.
+# In particular, kernel.sysrq=0 does not prevent privileged writes to /proc/sysrq-trigger.
+# CONDITIONAL auditd-only candidates; enable only when the exact kernel accepts them:
 # -a always,exit -F path=/proc/sysrq-trigger -F perm=w -k t2_sysrq
 # -a always,exit -F path=/proc/sys/kernel/sysrq -F perm=wa -k t2_sysrq
-
-# Narrow leaf-path alternative, usable only when the file already exists:
-# -a always,exit -F path=/etc/ld.so.preload -F perm=wa -k t2_loader_preload
-# This leaf watch cannot monitor initial creation when the file is absent.
-# Prefer filtered Sysmon-for-Linux FileCreate / EDR file telemetry for initial creation.
-# Unfiltered /etc and loader leaf candidates remain inactive; cloud-only scoped /etc rules are separate.
-
+# Until accepted and independently exercised, direct runtime SysRq attribution is NOT guaranteed.
+# The superseded single-file loader preload proposal was removed: parent auditing covers initial creation.

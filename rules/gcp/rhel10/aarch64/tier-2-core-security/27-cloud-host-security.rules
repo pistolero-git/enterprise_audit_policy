@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.18 | gcp/rhel10
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.19 | gcp/rhel10
 # ARM64-specific syscall mapping; reconcile against this product/version ARM64 STIG or approved baseline.
 # Enterprise Linux Audit v0.16 | gcp/rhel10 | mandatory Tier 2 cloud host controls
 # Source context: Google guest agent; Cloud Audit Logs required for firewall/IAM/API

@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.18 | aws/oraclelinux9
-# Enterprise Linux Audit v0.18  |  [aws/oraclelinux9]
+# TARGET ARCHITECTURE: x86_64 | v0.19 | aws/oraclelinux9
+# Enterprise Linux Audit v0.19  |  [aws/oraclelinux9]
 # Tier: tier-2-core-security
 # Purpose: network connect() attribution to interactive-user processes
 # Source/authority: Enterprise SOC/IR minimum (former Tier 3)

@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.18 | on-prem/almalinux9
-# Enterprise Linux Audit v0.18  |  [on-prem/almalinux9]
+# TARGET ARCHITECTURE: x86_64 | v0.19 | on-prem/almalinux9
+# Enterprise Linux Audit v0.19  |  [on-prem/almalinux9]
 # Tier: tier-2-core-security
 # Purpose: interactive process execution and forensic process context
 # Source/authority: Enterprise SOC/IR minimum (former Tier 3)

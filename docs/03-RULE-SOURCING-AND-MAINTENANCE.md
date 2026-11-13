@@ -1,4 +1,4 @@
-# 03 — Rule Sourcing and Maintenance | v0.18
+# 03 — Rule Sourcing and Maintenance | v0.19
 
 ## v0.17 — Targeted Tier 2 shell startup coverage decision
 
@@ -229,21 +229,19 @@ Each CVE-specific Tier 3 file must be named `CVE-YYYY-NNNN.rules` and include th
 
 Source detections: https://research.splunk.com/endpoint/dd16294f-44d2-40b4-a869-542c0b85113a/ (Copy Fail), https://research.splunk.com/endpoint/517e7bf8-d0aa-46ac-80e1-f9f498944b71/ (Dirty Frag), https://research.splunk.com/endpoint/7c1c36e6-014d-4a2c-b3ab-84d7cec3bbc2/ (SOCK_RAW), and https://research.splunk.com/endpoint/59a644b2-51eb-4995-9fc5-b0ff08926d73/ (PHP2Shell). Note that CVE-2026-111497 is a Brotli decoder issue, not a splice-based kernel issue.
 
-## v0.18 — Tier 2 decision traceability and references
+## v0.19 — Auditd-only security configuration monitoring
 
-| Objective | Decision | Source/evidence | Limitations |
-|---|---|---|---|
-| OpenSSH configuration modifications | Active `/etc/ssh` subtree `wa` watch in Ubuntu 22.04/24.04/26.04 and RHEL 9 variants; conditional elsewhere | Red Hat RHEL 9 OpenSSH docs; Ubuntu `openssh-client` package; Debian SSH wiki | Requires actual package and directory, no image-level verification |
-| Sudoers modification | Retain Tier 1 active watches where present; elsewhere require package-specific conditional activation | Red Hat sudo docs; Debian sudo wiki | File/path absent if sudo not installed; candidate comments are not effective collection |
-| Loader preload creation | Prefer filtered Sysmon for Linux Event 11 or EDR, not broad `/etc` auditd watch by default | Linux Audit auditctl manual; Microsoft Sysmon-Linux project | Creation and modification coverage and ingestion must be validated for selected telemetry source |
-| Magic SysRq abuse | Leave procfs audit candidates inactive; assess kernel/journald and sysctl policy collection | Linux kernel `Documentation/admin-guide/sysrq.rst` | Keyboard enable flag does not restrict privileged trigger writes; no universal auditd guarantee |
+| Objective | Current auditd implementation | Offline assurance / limitation |
+|---|---|---|
+| Loader preload first creation and modification | Active `-F dir=/etc -F perm=wa -k t2_etc_integrity` in all 80 variants | Captures subtree file creation/changes; source `PATH` records needed; separate mount points/alternate paths require assessment |
+| SSH and sudoers configuration changes | Same active `/etc` rule plus selected pre-existing targeted SSH/sudoers watches | No missing optional leaf path prerequisite for the new directory rule; installed packages and legacy exact-path rules must still be assessed |
+| System startup/persistence changes | Retained targeted `/etc/profile`, distro Bash startup and conditional `/etc/profile.d` rules plus active `/etc` rule | Overlap is intentional; review keys, event volume and path existence of older watch rules |
+| Magic SysRq policy vs invocation | Persistent `/etc/sysctl*` configuration monitoring active; procfs trigger candidate inactive | Direct SysRq trigger attribution NOT established offline; kernel-dependent acceptance must be recorded as open/waived |
+| Noninteractive config writes | `/etc` subtree rule is unfiltered on `auid` and `uid`, including daemon contexts | Broad event volume; root daemon-specific cloud rules overlap but preserve existing keys |
 
-Sources:
-- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/securing_networks/assembly_using-secure-communications-between-two-systems-with-openssh_securing-networks
-- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/htmlsingle/configuring_basic_system_settings/index
-- https://wiki.debian.org/SSH
-- https://wiki.debian.org/sudo
-- https://packages.ubuntu.com/openssh-client
+**Policy:** Tier 1 `-f 2`, Tier Finalize `-e 2`, and Tier 3 CVE selections unchanged. No secondary host monitoring product is required or specified for this auditd policy. Do not claim this package can observe remotely initiated cloud API actions; that remains outside auditd's technical scope.
+
+**References:**
 - https://man7.org/linux/man-pages/man8/auditctl.8.html
-- https://github.com/microsoft/Sysmon-Linux
-- https://www.kernel.org/doc/html/v6.10/admin-guide/sysrq.html
+- https://github.com/linux-audit/audit-userspace/blob/master/docs/audit.rules.7
+- https://www.kernel.org/doc/html/latest/admin-guide/sysrq.html
