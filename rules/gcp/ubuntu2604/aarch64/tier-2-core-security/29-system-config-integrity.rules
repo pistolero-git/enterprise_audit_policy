@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.17 | gcp/ubuntu2604
-# Enterprise Linux Audit Policy v0.17 | gcp/ubuntu2604 | Tier 2 — targeted shell-startup watches active; broad /etc proposal remains inactive
+# TARGET ARCHITECTURE: aarch64 (ARM64) | v0.18 | gcp/ubuntu2604
+# Enterprise Linux Audit Policy v0.18 | gcp/ubuntu2604 | Tier 2 — targeted shell-startup watches active; broad /etc proposal remains inactive
 # Source: enterprise SOC/IR; Unix shell vendor documentation and audited installed path prerequisites.
 # These watch system-level startup file changes (writes and attributes only), not user home dotfiles or reads.
 # /etc/profile and the distro Bash startup file are standard installed-package paths, but must resolve on the selected image.
@@ -22,13 +22,14 @@
 # /etc/profile.d is a documented default family directory; customized/minimal images still need a path preflight.
 
 # CVE-independent Magic SysRq control; conditional to kernel/sysctl support.
-# /etc/sysctl.conf and /etc/sysctl.d changes are covered by the active /etc rule.
-# This optional procfs watch must be separately validated before uncommenting:
+# No general unfiltered /etc audit rule: cloud profiles may already have a scoped auid=unset/euid=0 /etc rule; sysctl procfs actions require independent, applicable telemetry.
+# These procfs candidates require kernel/filesystem-specific audit acceptance checks; remain inactive:
 # -a always,exit -F path=/proc/sysrq-trigger -F perm=w -k t2_sysrq
 # -a always,exit -F path=/proc/sys/kernel/sysrq -F perm=wa -k t2_sysrq
 
 # Narrow leaf-path alternative, usable only when the file already exists:
 # -a always,exit -F path=/etc/ld.so.preload -F perm=wa -k t2_loader_preload
-# This path-specific candidate cannot monitor initial creation when the file
-# is absent. Both integrity proposals remain commented out (inactive).
+# This leaf watch cannot monitor initial creation when the file is absent.
+# Prefer filtered Sysmon-for-Linux FileCreate / EDR file telemetry for initial creation.
+# Unfiltered /etc and loader leaf candidates remain inactive; cloud-only scoped /etc rules are separate.
 

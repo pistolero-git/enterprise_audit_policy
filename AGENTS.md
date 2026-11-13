@@ -1,3 +1,19 @@
+# AGENTS.md — Enterprise Linux Audit Policy v0.18
+
+**Current release:** v0.18 (engineering candidate). The current source of truth is the corresponding packaged rules and three guides. Historical release references below are milestones, not current version claims.
+
+## v0.18 — Settled Tier 2 monitoring decisions
+
+- **CVE-independent OpenSSH configuration changes:** Tier 2 monitoring is required when OpenSSH is installed. Active `/etc/ssh` subtree watches now exist in Ubuntu 22.04/24.04/26.04 and RHEL 9 profiles (32 architecture variants); other profiles remain conditional. Do not claim active detection from commented candidates. Preflight package/path prerequisites before loading; if SSH genuinely absent, document N/A.
+- **Sudoers:** existing active watches remain unchanged in 32 variants. For other profiles require `sudo` applicability assessment and conditional watch activation when installed. Do not promote potentially nonexistent paths by default.
+- **Loader preload first creation:** A missing-file leaf watch cannot detect initial creation. Do not approve broad `dir=/etc` auditing without a separate volume/overlap decision. Prefer verified filtered Sysmon-for-Linux FileCreate Event 11 or EDR file telemetry; if neither exists, record a coverage gap, not an invented success.
+- **Magic SysRq:** the `kernel.sysrq` sysctl affects keyboard use; privileged writes to `/proc/sysrq-trigger` remain available. Procfs candidates stay disabled until target-kernel audit acceptance is confirmed. Do not conflate sysctl configuration with trigger attribution.
+- **Settled `-f 2`:** remains the one mandatory Tier 1 fail-secure directive in `18-security-critical.rules` per profile; do not change except via approved waiver. Final `-e 2` remains separate.
+- **Change scope:** v0.18 adds only 48 SSH directives across 32 profiles; the rest of active rules, tier-3 CVE files, and tier governance remain unchanged. The v0.17 proposal file does not gain new active rules; filtered `dir=/etc` cloud-host collection was already present in v0.17 and should not be confused with unfiltered baseline coverage.
+- **Validation status:** static only; no production/host certification. Preserve exact paths, architecture and applicability conditions.
+
+---
+
 # AGENTS.md — Enterprise Linux Audit Policy
 
 > **Purpose:** Portable handoff instructions for AI coding/review agents working on this Linux `auditd` policy project. Read this file, the current package `README.md`, and all three `docs/` guides before changing rules. Treat statements here as project decisions, **not** proof that an individual host or STIG requirement is compliant.
@@ -223,4 +239,4 @@ Current-release sites, versions, CVEs and requirements must be **reverified** wh
 4. **Continue offline product STIG/path completeness:** authoritative Ubuntu 22.04 V2R10, RHEL, AlmaLinux, Oracle Linux, SUSE, Amazon Linux and other supported OS profiles; package/image defaults and conditional guest agents. Do not falsely claim parity/compliance.
 5. **Maintain release provenance:** keep architecture/release headers, README and all three guide titles synchronized for every subsequent version. v0.16.1 fixed the previously reported housekeeping issues without changing active directives.
 
-**If another AI receives only this file:** ask for the latest package ZIP (currently v0.16.4) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.
+**If another AI receives only this file:** ask for the latest package ZIP (currently v0.18) before editing. The handoff contains policy and status, not the complete authoritative `.rules` content.

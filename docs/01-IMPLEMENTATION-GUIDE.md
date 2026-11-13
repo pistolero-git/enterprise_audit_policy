@@ -1,4 +1,4 @@
-# 01 — Implementation Guide | v0.17
+# 01 — Implementation Guide | v0.18
 
 ## v0.17 — Targeted mandatory Tier 2 shell-startup monitoring
 
@@ -204,3 +204,23 @@ If package/image access is unavailable, retain conditional rules as **unverified
 **Ordering:** Stage selected CVE files and any approved conditional rule edits **before** installing finalization with `-e 2`; later activation/retirement of rules on an immutable host normally requires reboot/redeployment of the audit ruleset. Do not treat a duplicate add failure as evidence the kernel chose a valid preferred rule. Check the effective rule set and audit keys during deployment.
 
 **CVE-independent hunting:** Monitoring every user's `.bashrc` or `.profile`, and sudoers read access, remains a targeted Tier 3/hunting decision, not a mandatory Tier 2 change. The SysRq procfs candidates in `29-system-config-integrity.rules` are also conditional until the kernel/image supports them.
+
+## v0.18: SSH/sudoers, loader preload, and SysRq applicability
+
+1. **OpenSSH package/path prerequisite:** For the Ubuntu 22.04/24.04/26.04 and RHEL 9 profiles, the Tier 2 `/etc/ssh` subtree watch is active. The OpenSSH client/server package must be installed and `/etc/ssh` must exist before rules are loaded. These conditions may not hold on all minimal/container images. If absent because SSH is genuinely not installed, record a justified N/A determination; if SSH is installed but the directory differs, adapt the profile with documented path evidence. Other OS profiles include a conditional SSH watch and must enable it when applicable.
+2. **Sudo policy prerequisite:** Preserve existing active Tier 1 watches. On profiles with conditional `/etc/sudoers` and `/etc/sudoers.d` watches, verify that sudo is installed and the paths exist, then enable targeted write/attribute rules, with x86 b32/native b64 matching the selected architecture. Do not declare coverage from merely commented candidate rules, and do not install sudo solely to make a watch load unless the platform independently requires sudo.
+3. **Loader preload:** The default loader preload configuration file may not exist. A leaf-path audit rule alone cannot detect its first creation when absent. Prefer specifically filtered Sysmon for Linux FileCreate Event 11 or another validated EDR file-creation source for initial creation and appropriate modification telemetry; validate filtering/ingestion separately. An unfiltered `/etc` recursive `perm=wa` watch is a more complete auditd collection option but is **not** approved for general mandatory Tier 2 because it broadens collection and can overlap existing watches. Neither an empty preload file nor a broad directory watch should be introduced unilaterally to force coverage.
+   **Example Sysmon for Linux filter fragment** (add inside the deployment's existing `EventFiltering` policy, not as a replacement for the whole Sysmon configuration):
+
+   ```xml
+   <FileCreate onmatch="include">
+     <TargetFilename condition="is">/etc/ld.so.preload</TargetFilename>
+   </FileCreate>
+   ```
+
+   This targets FileCreate (Event 11); ensure the deployed Linux Sysmon build supports it, and use other file-modification telemetry where overwrites/edits are not captured. Validate Splunk ingestion and filtering as a separate source requirement. Do not represent this as an auditd `.rules` directive.
+
+4. **Magic SysRq:** Check whether the kernel exposes `/proc/sysrq-trigger` and `/proc/sys/kernel/sysrq`. Kernel documentation distinguishes direct privileged trigger writes from the keyboard SysRq enable setting. Candidate procfs audit rules remain commented due to kernel/path acceptance and performance uncertainty. Prefer kernel/journald evidence and approved kernel configuration monitoring when available; this is not equivalent to universal auditd trigger attribution.
+5. **Exception handling:** Where applicable security objectives cannot be met by the chosen default profile, document source/package applicability and use the existing waiver/exception process; no blanket compliance claim is made.
+
+Sources: https://man7.org/linux/man-pages/man8/auditctl.8.html ; https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/securing_networks/ ; https://wiki.debian.org/SSH ; https://github.com/microsoft/Sysmon-Linux ; https://www.kernel.org/doc/html/v6.10/admin-guide/sysrq.html

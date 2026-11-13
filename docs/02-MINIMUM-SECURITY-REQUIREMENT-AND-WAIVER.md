@@ -1,4 +1,4 @@
-# 02 — Minimum Security Requirement and Waiver | v0.17
+# 02 — Minimum Security Requirement and Waiver | v0.18
 
 ## v0.17 — CVE-independent Tier 2 shell-startup baseline
 
@@ -81,3 +81,11 @@ The default package keeps `-f 2` and `-e 2` unchanged. Requests for `-f 1` on a 
 ## v0.16 — CVE response and Tier 3 monitoring
 
 A Tier 3 CVE file is a *detection option*, not a patch, workaround, or compensating control unless separately assessed and accepted by the security authority. For each affected asset record its patch/mitigation status, CVE(s), applicable Tier 3 file, date/owner, detection key or Splunk search dependencies, and activation/retirement decision. If multiple CVEs share rules, recording both CVEs with one approved sensor is acceptable; forcing duplicate rule installation is not required. The proposed Tier 2 `/etc` directory-integrity watch has **not** been activated or promoted into the mandatory baseline. Its future adoption requires an approved scope/performance decision.
+
+## v0.18 — Security-configuration monitoring decisions
+
+- OpenSSH configuration modifications are a CVE-independent mandatory Tier 2 objective **where OpenSSH is installed**. An absent package may be N/A with evidence; an installed package with an inactive watch is a coverage gap until remediated or formally excepted.
+- Sudoers modification monitoring remains mandatory **where sudo is installed and applicable**. Do not claim conditional/commented watches satisfy this objective.
+- Preload-file initial creation is not guaranteed by the baseline auditd leaf-watch approach. A separately validated EDR/Sysmon file-creation source is the preferred complement; missing required visibility must be assessed under the normal waiver/exception process. An unapproved unfiltered `/etc` auditd watch is not a substitute for documented engineering review. Existing cloud-host `auid=unset,euid=0` `/etc` watches cover only that filtered population.
+- SysRq candidate watches remain conditional; do not claim that `kernel.sysrq` configuration monitoring alone detects direct privileged writes to `/proc/sysrq-trigger`.
+- Tier 1 audit failure policy `-f 2` and Tier Finalize immutability `-e 2` remain unchanged.

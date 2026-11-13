@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.17 | on-prem/ubuntu2604
-# Enterprise Linux Audit v0.17  |  [on-prem/ubuntu2604]
+# TARGET ARCHITECTURE: x86_64 | v0.18 | on-prem/ubuntu2604
+# Enterprise Linux Audit v0.18  |  [on-prem/ubuntu2604]
 # Tier: tier-1-baseline
 # Purpose: failure mode and loginuid integrity
 # Source/authority: Applicable STIG audit framework; linux-audit auditctl/audit.rules

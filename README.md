@@ -1,9 +1,18 @@
-# Enterprise Linux Audit Policy — v0.17
+# Enterprise Linux Audit Policy — v0.18
 
 **Status: ENGINEERING CANDIDATE — no profile is certified STIG-compliant or production-approved by this release.**
 
 v0.15 retains the v0.14 remediation of several *static* defects identified in the independent v0.11 validation report. **It does not close the remaining platform STIG-reconciliation, file-existence, agent-installation, on-host event-generation, performance, or SIEM-validation gates.**
 
+
+## v0.18 — SSH integrity expansion and source-selection decision
+
+- **Activated targeted Tier 2 OpenSSH configuration subtree monitoring** (`-F dir=/etc/ssh -F perm=wa -k t2_ssh_change`) for Ubuntu 22.04/24.04/26.04 and RHEL 9 profiles in every available hosting environment: **16 OS/environment combinations × 2 architectures = 32 profile variants; 48 new active directives** (x86_64 b64+b32, ARM64 b64). The directory and package must exist on the deployed image. Other 48 variants remain conditional; applicability must be documented and enabled when OpenSSH is installed.
+- **Sudoers:** The existing 32 profiles with active watches are unchanged. In the other 48, the watches are *conditional on sudo installation*; they are not silently considered covered. No blanket watches were activated that could reference missing files.
+- **Loader preload:** First-time creation of a normally absent file is **not** captured by the inactive leaf watch. An unfiltered `/etc` recursive watch was *not* promoted to the mandatory Tier 2 baseline. Existing cloud-host rules include a narrower `auid=unset,euid=0,dir=/etc` sensor, which can observe only a subset of loader-related changes. Prioritize narrowly filtered Sysmon for Linux FileCreate (Event 11) or equivalent EDR file-creation telemetry when available; any gap without that source requires documented assessment.
+- **Magic SysRq:** `/proc/sys/kernel/sysrq` and `/proc/sysrq-trigger` serve different functions; `kernel.sysrq` does not block privileged use of `sysrq-trigger`. Kernel/procfs audit watch candidates remain disabled pending platform validation. Do not infer live-control coverage from persistent sysctl configuration watches.
+- **Documentation and AGENTS.md:** corrected the stale handoff package reference and updated all guide titles. All existing active rules, all CVE-specific Tier 3 rules, and the settled `-f 2`/`-e 2` controls are preserved.
+- **Validation:** Static comparison against v0.17 finds exactly 48 new active directives in 32 profiles, zero removed/modified active directives, and no additional directory-wide `/etc` rules (existing filtered cloud-host watches are unchanged). No host tests, production approval, or current-STIG re-certification is implied.
 
 ## v0.17 — Targeted Tier 2 system startup integrity (active rules)
 

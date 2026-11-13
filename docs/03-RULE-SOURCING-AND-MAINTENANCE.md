@@ -1,4 +1,4 @@
-# 03 — Rule Sourcing and Maintenance | v0.17
+# 03 — Rule Sourcing and Maintenance | v0.18
 
 ## v0.17 — Targeted Tier 2 shell startup coverage decision
 
@@ -228,3 +228,22 @@ Rule lineage must show the **current package version** for every `.rules` file w
 Each CVE-specific Tier 3 file must be named `CVE-YYYY-NNNN.rules` and include the exploit-detection intent, reference, applicable platform preconditions, enabled/conditional status, audit keys/Splunk dependency, and patch-versus-monitoring caveat. Distinguish the CVE ID from general technique names; never label a non-CVE baseline rule with a CVE solely because a detection was associated with that analytic story. Equivalent rules may occur in separate CVE files for independent selection. Do not load all of them indiscriminately: deduplicate selections explicitly, preserve required keys, and examine overlaps with Tier 1/2. New broad hunt requirements require CVE-independent justification before Tier 2 promotion.
 
 Source detections: https://research.splunk.com/endpoint/dd16294f-44d2-40b4-a869-542c0b85113a/ (Copy Fail), https://research.splunk.com/endpoint/517e7bf8-d0aa-46ac-80e1-f9f498944b71/ (Dirty Frag), https://research.splunk.com/endpoint/7c1c36e6-014d-4a2c-b3ab-84d7cec3bbc2/ (SOCK_RAW), and https://research.splunk.com/endpoint/59a644b2-51eb-4995-9fc5-b0ff08926d73/ (PHP2Shell). Note that CVE-2026-111497 is a Brotli decoder issue, not a splice-based kernel issue.
+
+## v0.18 — Tier 2 decision traceability and references
+
+| Objective | Decision | Source/evidence | Limitations |
+|---|---|---|---|
+| OpenSSH configuration modifications | Active `/etc/ssh` subtree `wa` watch in Ubuntu 22.04/24.04/26.04 and RHEL 9 variants; conditional elsewhere | Red Hat RHEL 9 OpenSSH docs; Ubuntu `openssh-client` package; Debian SSH wiki | Requires actual package and directory, no image-level verification |
+| Sudoers modification | Retain Tier 1 active watches where present; elsewhere require package-specific conditional activation | Red Hat sudo docs; Debian sudo wiki | File/path absent if sudo not installed; candidate comments are not effective collection |
+| Loader preload creation | Prefer filtered Sysmon for Linux Event 11 or EDR, not broad `/etc` auditd watch by default | Linux Audit auditctl manual; Microsoft Sysmon-Linux project | Creation and modification coverage and ingestion must be validated for selected telemetry source |
+| Magic SysRq abuse | Leave procfs audit candidates inactive; assess kernel/journald and sysctl policy collection | Linux kernel `Documentation/admin-guide/sysrq.rst` | Keyboard enable flag does not restrict privileged trigger writes; no universal auditd guarantee |
+
+Sources:
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/securing_networks/assembly_using-secure-communications-between-two-systems-with-openssh_securing-networks
+- https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/htmlsingle/configuring_basic_system_settings/index
+- https://wiki.debian.org/SSH
+- https://wiki.debian.org/sudo
+- https://packages.ubuntu.com/openssh-client
+- https://man7.org/linux/man-pages/man8/auditctl.8.html
+- https://github.com/microsoft/Sysmon-Linux
+- https://www.kernel.org/doc/html/v6.10/admin-guide/sysrq.html

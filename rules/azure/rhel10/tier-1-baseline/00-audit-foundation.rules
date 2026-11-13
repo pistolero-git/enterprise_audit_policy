@@ -1,5 +1,5 @@
-# TARGET ARCHITECTURE: x86_64 | v0.17 | azure/rhel10
-# Enterprise Linux Audit v0.17  |  [azure/rhel10]
+# TARGET ARCHITECTURE: x86_64 | v0.18 | azure/rhel10
+# Enterprise Linux Audit v0.18  |  [azure/rhel10]
 # Tier: tier-1-baseline
 # Purpose: initialize managed policy
 # Source/authority: linux-audit/audit-userspace rules/10-base-config.rules; enterprise policy

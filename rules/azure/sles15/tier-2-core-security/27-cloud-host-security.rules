@@ -1,4 +1,4 @@
-# TARGET ARCHITECTURE: x86_64 | v0.17 | azure/sles15
+# TARGET ARCHITECTURE: x86_64 | v0.18 | azure/sles15
 # Enterprise Linux Audit v0.16 | azure/sles15 | mandatory Tier 2 cloud host controls
 # Source context: Azure Linux Agent and cloud-init; Activity Log required for NSG/RBAC
 # Host auditd cannot observe cloud-native API calls, security-group, IAM or NSG changes initiated remotely.
