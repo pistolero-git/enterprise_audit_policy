@@ -165,3 +165,15 @@ finalize/               99-finalize.rules (-e 2; last)
 - **Volume:** Tier 2 `execve`, `execveat`, filesystem changes, `connect`, and daemon network monitoring can be expensive. Performance failures require remediation/tuning within the required security objective or an approved waiver.
 
 See `docs/01-IMPLEMENTATION-GUIDE.md` for safe selection/staging, `docs/02-MINIMUM-SECURITY-REQUIREMENT-AND-WAIVER.md` for exceptions, and `docs/03-RULE-SOURCING-AND-MAINTENANCE.md` for official sources and refresh instructions.
+
+## 10. Carry-forward work queue (not authorization to implement)
+
+The following work remains open. This summary mirrors **AGENTS.md §10**; it does not authorize changes to mandatory rules or expand Tier 3 by itself.
+
+1. **Tier 2 directory-integrity validation:** Assess active recursive `/etc` write/attribute monitoring for coverage across mount points, overlap with targeted watches, event volume, and audit backlog. Direct Magic SysRq procfs auditing remains conditional and unverified.
+2. **Tier 3 non-CVE hunts:** Evaluate user shell initialization changes, sudoers read access, and service-scoped investigations separately. Do not promote a hunt to mandatory Tier 2 solely because a Splunk analytic uses it.
+3. **CVE-specific rule applicability:** Recheck CVE references, affected OS/kernel versions, overlapping telemetry, and the currently inactive PHP2Shell executable selectors. Preserve the distinct `CVE-YYYY-NNNN.rules` files.
+4. **OS-specific STIG and path verification:** Continue authoritative Ubuntu 22.04 V2R10 reconciliation and platform-specific mapping for RHEL, AlmaLinux, Oracle Linux, SUSE, Amazon Linux, and other supported profiles. Validate package/image path prerequisites and conditional cloud agents without claiming host testing or compliance.
+5. **Release traceability:** Keep rule architecture/version headers, README, `AGENTS.md`, and all three guide titles synchronized in subsequent releases.
+
+For detailed AI maintenance instructions and the current policy decisions, see `AGENTS.md`. All profiles remain **engineering candidates** until applicable validation gates are satisfied.
