@@ -5,6 +5,7 @@
 # Purpose: security administration process activity
 # Source/authority: Enterprise SOC/IR minimum
 # Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# See docs/04-TIER-2-AND-3-RULE-REFERENCE.md for rule purposes
 # Release state: engineering candidate; NOT independently certified STIG compliant.
 
 

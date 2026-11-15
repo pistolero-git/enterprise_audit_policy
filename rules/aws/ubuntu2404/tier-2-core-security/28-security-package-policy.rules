@@ -5,6 +5,7 @@
 # Source/authority: Enterprise SOC/IR minimum; distro package manager vendor documentation
 # Architecture: x86_64 (b64 native, b32 compatibility); use aarch64/ subprofile for ARM64.
 # Release state: engineering candidate; NOT independently certified STIG compliant.
+# See docs/04-TIER-2-AND-3-RULE-REFERENCE.md for rule purposes
 
 
 -a always,exit -F arch=b64 -F dir=/etc/apt -F perm=wa -k t2_pkg_repo

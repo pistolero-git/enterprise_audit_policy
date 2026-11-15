@@ -5,6 +5,7 @@
 # Includes loader preload creation, OpenSSH/sudoers (if installed), system profiles and sysctl configuration.
 # No auid/uid filter: this includes both interactive users and services with auid=unset.
 # Monitor only wa, not reads; filesystem nested mounts/bind mounts require separate suitability assessment.
+# See docs/04-TIER-2-AND-3-RULE-REFERENCE.md for rule purposes
 # This expands volume beyond v0.18: evaluate audit event rate, audit lost/backlog and overlap with existing rules.
 # Tier 1 -f 2 stays mandatory; a platform unable to support Tier 2 requires documented waiver.
 # x86_64: native b64 plus compat b32; ARM64: native b64 only.

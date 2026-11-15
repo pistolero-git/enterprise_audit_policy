@@ -5,6 +5,7 @@
 # Purpose: direct-root session permission/file destruction behavior
 # Source/authority: Enterprise SOC/IR minimum (former Tier 3)
 # Architecture: aarch64 (b64 only). No x86/compat b32 syscall rules.
+# See docs/04-TIER-2-AND-3-RULE-REFERENCE.md for rule purposes
 # Release state: engineering candidate; NOT independently certified STIG compliant.
 
 

@@ -5,6 +5,7 @@
 # Cloud native API logging is a mandatory companion; see Implementation Guide.
 # No agent-specific path is assumed installed; missing agent paths MUST be assessed for this image.
 # Monitors root daemon automation with unset loginuid (not normal interactive root sessions).
+# See docs/04-TIER-2-AND-3-RULE-REFERENCE.md for rule purposes
 -a always,exit -F arch=b64 -S execve,execveat -F auid=unset -F euid=0 -k t2_aws_daemon_exec
 # Root-owned cloud daemon outbound connections; SOCKADDR does not expose cloud API operation semantics.
 -a always,exit -F arch=b64 -S connect -F auid=unset -F euid=0 -k t2_aws_daemon_connect
